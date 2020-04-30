@@ -7,7 +7,7 @@ import { Link, useParams } from "react-router-dom";
 
 import CommentArea from "./CommentArea";
 import ChatArea from "./ChatArea";
-import Input from "./Input";
+import MyInput from "./MyInput";
 
 export default function Room() {
   const { name } = useParams();
@@ -68,7 +68,7 @@ function RoomLoaded({ roomRef, snapshots }) {
   }
   return (
     <>
-      <Input defaultVal={videoId} onEnter={onEnter} />
+      <MyInput defaultVal={videoId} onEnter={onEnter} />
       {!videoId && "input youtube video id"}
       {videoId && (
         <>

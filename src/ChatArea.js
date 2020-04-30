@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Input from "./Input";
+import MyInput from "./MyInput";
 
 import { DateTime } from "luxon";
 
@@ -34,7 +34,7 @@ export default function ChatArea({ chats, chatRef, snapshotsVal }) {
           );
         })}
       </div>
-      <Input onEnter={onEnter} />
+      <MyInput onEnter={onEnter} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function Input({ defaultVal = "", onEnter }) {
+export default function MyInput({ defaultVal = "", onEnter }) {
   const [value, setValue] = useState(defaultVal);
 
   function onClick() {

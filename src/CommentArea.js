@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Input from "./Input";
+import MyInput from "./MyInput";
 
 export default function CommentArea({ comments, commentRef, snapshotsVal }) {
   const { isPlaying, startAt, stopAt } = snapshotsVal;
@@ -35,7 +35,7 @@ export default function CommentArea({ comments, commentRef, snapshotsVal }) {
           </div>
         );
       })}
-      <Input onEnter={onEnter} />
+      <MyInput onEnter={onEnter} />
     </div>
   );
 }
