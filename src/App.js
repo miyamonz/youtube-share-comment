@@ -19,8 +19,6 @@ export default function App() {
         {!loading && (
           <>
             <AppRouter />
-            <br />
-            <span>{JSON.stringify(snapshots.val())}</span>
           </>
         )}
       </div>

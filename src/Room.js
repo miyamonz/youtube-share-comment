@@ -5,6 +5,8 @@ import { db } from "./firebase";
 import { useObject } from "react-firebase-hooks/database";
 import { Link, useParams } from "react-router-dom";
 
+import CommentArea from "./CommentArea";
+
 export default function Room() {
   const { name } = useParams();
   const ref = db.ref(`rooms/${name}`);
@@ -20,15 +22,23 @@ function RoomLoaded({ roomRef, snapshots }) {
     comments = [],
     startAt,
     stopAt,
+    seekTo,
   } = snapshots.val();
   const [player, setPlayer] = useState(null);
   const onReady = (event) => {
     setPlayer(event.target);
-    const currentTime = (Date.now() - startAt) / 1000;
+    const currentTime = isPlaying ? (Date.now() - startAt) / 1000 : stopAt;
     if (isPlaying) event.target.seekTo(currentTime);
-    else event.target.seekTo(stopAt).pauseVideo();
+    else event.target.seekTo(currentTime).pauseVideo();
   };
 
+  useEffect(() => {
+    if (player && seekTo) {
+      console.log(seekTo);
+      player.seekTo(seekTo);
+      roomRef.child("seekTo").set(null);
+    }
+  }, [player, seekTo]);
   useEffect(() => {
     if (player) {
       isPlaying ? player.playVideo() : player.pauseVideo();
@@ -36,39 +46,52 @@ function RoomLoaded({ roomRef, snapshots }) {
   }, [isPlaying]);
 
   const opts = {
-    height: "390",
-    width: "640",
+    width: "100%",
     playerVars: {
       // https://developers.google.com/youtube/player_parameters
       autoplay: 0,
       controls: 0,
+      rel: 0,
     },
   };
 
-  const c = Object.entries(comments).map(([secStr, data]) => [
-    parseInt(secStr, 10),
-    data,
-  ]);
+  function onEnter(id) {
+    roomRef.child("videoId").set(id);
+    roomRef.child("isPlaying").set(false);
+    roomRef.child("startAt").set(Date.now());
+    roomRef.child("stopAt").set(0);
+  }
   return (
     <>
       room: {name}
       <br />
-      <Input
-        defaultVal={videoId}
-        onEnter={(id) => roomRef.child("videoId").set(id)}
+      <Input defaultVal={videoId} onEnter={onEnter} />
+      {videoId && (
+        <div>
+          <Youtube
+            videoId={videoId}
+            opts={opts}
+            onReady={onReady}
+            style={{ width: "100%" }}
+          />
+          {player && (
+            <>
+              <Seekbar roomRef={roomRef} player={player} />
+              <ToggleButton
+                roomRef={roomRef}
+                isPlaying={isPlaying}
+                disabled={!player}
+                player={player}
+              />
+            </>
+          )}
+        </div>
+      )}
+      <CommentArea
+        comments={comments}
+        commentRef={roomRef.child("comments")}
+        snapshotsVal={snapshots.val()}
       />
-      {videoId && <Youtube videoId={videoId} opts={opts} onReady={onReady} />}
-      <ToggleButton
-        roomRef={roomRef}
-        isPlaying={isPlaying}
-        disabled={!player}
-        player={player}
-      />
-      <div>
-        {c.map(([ms, data]) => (
-          <div key={ms}>{JSON.stringify(data)}</div>
-        ))}
-      </div>
     </>
   );
 }
@@ -92,11 +115,42 @@ function ToggleButton({ roomRef, isPlaying, disabled = true, player }) {
     roomRef.child("isPlaying").set(!isPlaying);
     if (!isPlaying) roomRef.child("startAt").set(Date.now());
     if (isPlaying) roomRef.child("stopAt").set(player.getCurrentTime());
-    console.log(player);
   };
   return (
     <button type="button" onClick={onClick} disabled={disabled}>
       {isPlaying ? "Puase" : "Play"}
     </button>
+  );
+}
+
+function Seekbar({ player, roomRef }) {
+  const duration = player.getDuration();
+
+  const [updated, setUpdated] = useState();
+  const [time, setTime] = useState(() => player.getCurrentTime());
+
+  useEffect(() => {
+    let id = setTimeout(() => {
+      setTime(player.getCurrentTime());
+      setUpdated([]);
+    }, 100);
+    return () => clearTimeout(id);
+  }, [time, updated]);
+
+  function onChange(e) {
+    const val = parseFloat(e.target.value, 10);
+    roomRef.child("seekTo").set(val);
+    roomRef.child("startAt").set(Date.now());
+    setTime(val);
+  }
+  return (
+    <input
+      type="range"
+      max={duration}
+      step={0.1}
+      style={{ width: "100%" }}
+      value={time}
+      onChange={onChange}
+    />
   );
 }
