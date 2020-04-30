@@ -6,6 +6,8 @@ import Room from "./Room";
 
 import { db } from "./firebase";
 
+import Header from "./Header";
+
 export default function App() {
   const [snapshots, loading, error] = useObject(db.ref());
   return (
@@ -27,13 +29,7 @@ function AppRouter() {
   return (
     <Router>
       <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-          </ul>
-        </nav>
+        <Header />
 
         <Switch>
           <Route path="/" exact children={<Home />} />
@@ -52,21 +48,37 @@ function Home() {
   const roomsSnapshot = snapshots.child("rooms");
   const rooms = Object.values(roomsSnapshot.val());
   const RoomLink = ({ name }) => {
-    return <Link to={`/rooms/${name}`}>{name}</Link>;
+    return (
+      <Link
+        className="text-blue-600 visited:text-purple-600 "
+        to={`/rooms/${name}`}
+      >
+        {name}
+      </Link>
+    );
   };
   return (
     <>
       <span>rooms</span>
-      <ul>
-        {rooms &&
-          rooms.map((room) => (
-            <li key={room.createdAt}>
-              <RoomLink {...room} />
-            </li>
-          ))}
-      </ul>
+      <table className="table-auto">
+        <thead>
+          <tr>
+            <th className="w-1/2 px-4 py-2">rooms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rooms &&
+            rooms.map((room) => (
+              <tr key={room.createdAt}>
+                <td className="border px-4 py-2">
+                  <RoomLink {...room} />
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </table>
+      <br />
       <CreateRoomButton snapshot={roomsSnapshot} />
-      <button onClick={() => db.ref("rooms").set(null)}>clear rooms</button>
     </>
   );
 }

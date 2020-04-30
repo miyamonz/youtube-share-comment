@@ -6,6 +6,7 @@ import { useObject } from "react-firebase-hooks/database";
 import { Link, useParams } from "react-router-dom";
 
 import CommentArea from "./CommentArea";
+import ChatArea from "./ChatArea";
 import Input from "./Input";
 
 export default function Room() {
@@ -21,6 +22,7 @@ function RoomLoaded({ roomRef, snapshots }) {
     videoId,
     isPlaying,
     comments = [],
+    chats = [],
     startAt,
     stopAt,
     seekTo,
@@ -66,30 +68,33 @@ function RoomLoaded({ roomRef, snapshots }) {
   }
   return (
     <>
-      room: {name}
-      <br />
       <Input defaultVal={videoId} onEnter={onEnter} />
       {!videoId && "input youtube video id"}
       {videoId && (
         <>
-          <div>
-            <Youtube
-              videoId={videoId}
-              opts={opts}
-              onReady={onReady}
-              style={{ width: "100%" }}
-            />
-            {player && (
-              <>
-                <Seekbar roomRef={roomRef} player={player} />
-                <ToggleButton
-                  roomRef={roomRef}
-                  isPlaying={isPlaying}
-                  disabled={!player}
-                  player={player}
-                />
-              </>
-            )}
+          <div style={{ display: "flex", height: "50vh" }}>
+            <div style={{ width: "80%", maxWidth: 640 }}>
+              <Youtube
+                videoId={videoId}
+                opts={opts}
+                onReady={onReady}
+                style={{ width: "100%" }}
+              />
+              {player && (
+                <>
+                  <Seekbar roomRef={roomRef} player={player} />
+                  <ToggleButton
+                    roomRef={roomRef}
+                    isPlaying={isPlaying}
+                    disabled={!player}
+                    player={player}
+                  />
+                </>
+              )}
+            </div>
+            <div style={{ height: "100%" }}>
+              <ChatArea chats={chats} chatRef={roomRef.child("chats")} />
+            </div>
           </div>
           <div>
             <CommentArea
