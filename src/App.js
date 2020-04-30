@@ -7,14 +7,11 @@ import Room from "./Room";
 import { db } from "./firebase";
 
 export default function App() {
-  // db.ref("now").set(Date.now());
-  db.ref("videoId").set("XxVg_s8xAms");
-
   const [snapshots, loading, error] = useObject(db.ref());
   return (
     <>
       <div>
-        {error && <strong>Error</strong>}
+        {error && (console.error(error), (<strong>Error</strong>))}
         {loading && <span>List: Loading...</span>}
         {!loading && (
           <>
