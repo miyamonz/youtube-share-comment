@@ -1,5 +1,17 @@
 {
   "projects": {
     "default": "youtube-share-comment"
+  },
+  "targets": {
+    "youtube-share-comment": {
+      "hosting": {
+        "monocchi": [
+          "watch-monocchisan"
+        ],
+        "default": [
+          "share-comment"
+        ]
+      }
+    }
   }
 }
