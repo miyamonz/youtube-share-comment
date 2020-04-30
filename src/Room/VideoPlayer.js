@@ -4,7 +4,7 @@ import { useRoomContext } from "./ContextRoom";
 
 export default function VideoPlayer({ videoId }) {
   const {
-    val: { seekTo, startAt, isPlaying },
+    val: { seekTo, startAt, stopAt, isPlaying },
     ref: roomRef,
   } = useRoomContext();
   const [player, setPlayer] = useState(null);
@@ -48,15 +48,17 @@ export default function VideoPlayer({ videoId }) {
         style={{ width: "100%" }}
       />
       {player && (
-        <>
-          <Seekbar roomRef={roomRef} isPlaying={isPlaying} player={player} />
+        <div style={{ display: "flex" }}>
           <ToggleButton
             roomRef={roomRef}
             isPlaying={isPlaying}
             player={player}
             disabled={!player}
           />
-        </>
+          <div style={{ flex: 1 }}>
+            <Seekbar roomRef={roomRef} isPlaying={isPlaying} player={player} />
+          </div>
+        </div>
       )}
     </>
   );
@@ -69,7 +71,12 @@ function ToggleButton({ roomRef, isPlaying, disabled = true, player }) {
     if (isPlaying) roomRef.child("stopAt").set(player.getCurrentTime());
   };
   return (
-    <button type="button" onClick={onClick} disabled={disabled}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      style={{ fontSize: 30, width: "100px" }}
+    >
       {isPlaying ? "Puase" : "Play"}
     </button>
   );

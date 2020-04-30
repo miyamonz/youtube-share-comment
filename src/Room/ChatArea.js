@@ -16,7 +16,6 @@ export default function ChatArea({ chats, chatRef, snapshotsVal }) {
   }
   return (
     <div style={{ height: "100%" }}>
-      <h3>chat</h3>
       <div style={{ overflow: "scroll" }}>
         {Object.values(chats).map((c) => {
           const date = DateTime.fromMillis(c.time);

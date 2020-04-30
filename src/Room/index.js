@@ -44,7 +44,7 @@ function RoomLayout() {
   } = useRoomContext();
   return (
     <>
-      <div style={{ display: "flex", height: "50vh" }}>
+      <div style={{ display: "flex", height: 420 }}>
         <div style={{ width: "80%", maxWidth: 640 }}>
           <VideoPlayer {...{ videoId }} />
         </div>
@@ -52,6 +52,7 @@ function RoomLayout() {
           <ChatArea chats={chats} chatRef={roomRef.child("chats")} />
         </div>
       </div>
+      <hr />
       <div>
         <CommentArea
           comments={comments}

@@ -31,7 +31,12 @@ export default function CommentArea({ comments, commentRef }) {
         return (
           <div key={c.time}>
             <span>
-              <a onClick={() => clickTime(c.time)} href="javascript:void(0)">
+              <a
+                onClick={(e) => {
+                  clickTime(c.time), e.preventDefault();
+                }}
+                href="#"
+              >
                 {mm}:{ss}
               </a>
             </span>
