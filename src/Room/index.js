@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer";
 import CommentArea from "./CommentArea";
 import ChatArea from "./ChatArea";
-import MyInput from "./MyInput";
+import MyInput from "../MyInput";
 
 export default function Room() {
   const { name } = useParams();

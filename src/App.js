@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useObject } from "react-firebase-hooks/database";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Room from "./Room";
+import Room from "./Room/index.js";
 
 import { db } from "./firebase";
 

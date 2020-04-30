@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Youtube from "react-youtube";
 
-import { useStore } from "./store";
-
 export default function VideoPlayer({ roomRef, videoId, isPlaying }) {
-  const [{ seekTo }] = useStore();
   const [player, setPlayer] = useState(null);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 
-import { db } from "./firebase";
+import { db } from "../firebase";
 import { useObject } from "react-firebase-hooks/database";
 
 export const Context = React.createContext();
