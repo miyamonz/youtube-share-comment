@@ -5,8 +5,12 @@ import { useRoomContext } from "./ContextRoom";
 export default function CommentArea({ comments, commentRef }) {
   const {
     val: { isPlaying, startAt, stopAt },
+    ref: roomRef,
   } = useRoomContext();
-  function onEnter(text) {
+  function clickTime(time) {
+    roomRef.child("seekTo").set(time);
+  }
+  function sendComment(text) {
     const currentTime = isPlaying ? (Date.now() - startAt) / 1000 : stopAt;
     const time = Math.floor(currentTime * 100) / 100;
     const curInt = parseInt(time * 100, 10);
@@ -27,7 +31,9 @@ export default function CommentArea({ comments, commentRef }) {
         return (
           <div key={c.time}>
             <span>
-              {mm}:{ss}
+              <a onClick={() => clickTime(c.time)} href="javascript:void(0)">
+                {mm}:{ss}
+              </a>
             </span>
             {"\t"}
             <span>{c.text}</span>
@@ -38,7 +44,7 @@ export default function CommentArea({ comments, commentRef }) {
           </div>
         );
       })}
-      <MyInput onEnter={onEnter} />
+      <MyInput onEnter={sendComment} />
     </div>
   );
 }
