@@ -18,8 +18,10 @@ export default function Room() {
 }
 
 function RoomLoaded() {
-  const [snapshots, roomRef] = useRoomContext();
-  const { videoId } = snapshots.val();
+  const {
+    val: { videoId },
+    ref: roomRef,
+  } = useRoomContext();
 
   function sendVideoId(id) {
     roomRef.child("videoId").set(id);
@@ -36,8 +38,10 @@ function RoomLoaded() {
 }
 
 function RoomLayout() {
-  const [snapshots, roomRef] = useRoomContext();
-  const { videoId, comments = [], chats = [] } = snapshots.val();
+  const {
+    val: { videoId, comments = [], chats = [] },
+    ref: roomRef,
+  } = useRoomContext();
   return (
     <>
       <div style={{ display: "flex", height: "50vh" }}>
@@ -52,7 +56,6 @@ function RoomLayout() {
         <CommentArea
           comments={comments}
           commentRef={roomRef.child("comments")}
-          snapshotsVal={snapshots.val()}
         />
       </div>
     </>

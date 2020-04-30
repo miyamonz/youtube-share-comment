@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import MyInput from "../MyInput";
+import { useRoomContext } from "./ContextRoom";
 
-export default function CommentArea({ comments, commentRef, snapshotsVal }) {
-  const { isPlaying, startAt, stopAt } = snapshotsVal;
+export default function CommentArea({ comments, commentRef }) {
+  const {
+    val: { isPlaying, startAt, stopAt },
+  } = useRoomContext();
   function onEnter(text) {
     const currentTime = isPlaying ? (Date.now() - startAt) / 1000 : stopAt;
     const time = Math.floor(currentTime * 100) / 100;

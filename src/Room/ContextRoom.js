@@ -13,8 +13,11 @@ export const Provider = ({ children, name }) => {
   const ref = db.ref(`rooms/${name}`);
   const [snapshots, loading, error] = useObject(ref);
 
-  if (loading) return "loading room";
-  return (
-    <Context.Provider value={[snapshots, ref]}>{children}</Context.Provider>
-  );
+  if (loading) return <span>"loading room"</span>;
+  const value = {
+    val: snapshots.val(),
+    snapshots,
+    ref,
+  };
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 };
