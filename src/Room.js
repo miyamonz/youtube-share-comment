@@ -6,6 +6,7 @@ import { useObject } from "react-firebase-hooks/database";
 import { Link, useParams } from "react-router-dom";
 
 import CommentArea from "./CommentArea";
+import Input from "./Input";
 
 export default function Room() {
   const { name } = useParams();
@@ -68,46 +69,37 @@ function RoomLoaded({ roomRef, snapshots }) {
       room: {name}
       <br />
       <Input defaultVal={videoId} onEnter={onEnter} />
+      {!videoId && "input youtube video id"}
       {videoId && (
-        <div>
-          <Youtube
-            videoId={videoId}
-            opts={opts}
-            onReady={onReady}
-            style={{ width: "100%" }}
-          />
-          {player && (
-            <>
-              <Seekbar roomRef={roomRef} player={player} />
-              <ToggleButton
-                roomRef={roomRef}
-                isPlaying={isPlaying}
-                disabled={!player}
-                player={player}
-              />
-            </>
-          )}
-        </div>
+        <>
+          <div>
+            <Youtube
+              videoId={videoId}
+              opts={opts}
+              onReady={onReady}
+              style={{ width: "100%" }}
+            />
+            {player && (
+              <>
+                <Seekbar roomRef={roomRef} player={player} />
+                <ToggleButton
+                  roomRef={roomRef}
+                  isPlaying={isPlaying}
+                  disabled={!player}
+                  player={player}
+                />
+              </>
+            )}
+          </div>
+          <div>
+            <CommentArea
+              comments={comments}
+              commentRef={roomRef.child("comments")}
+              snapshotsVal={snapshots.val()}
+            />
+          </div>
+        </>
       )}
-      <CommentArea
-        comments={comments}
-        commentRef={roomRef.child("comments")}
-        snapshotsVal={snapshots.val()}
-      />
-    </>
-  );
-}
-
-function Input({ defaultVal = "", onEnter }) {
-  const [value, setValue] = useState(defaultVal);
-
-  function onClick() {
-    onEnter(value);
-  }
-  return (
-    <>
-      <input value={value} onChange={(e) => setValue(e.target.value)} />
-      <button onClick={onClick}>send</button>
     </>
   );
 }
