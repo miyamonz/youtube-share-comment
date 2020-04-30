@@ -30,3 +30,5 @@ try {
   document.getElementById("load").innerHTML =
     "Error loading the Firebase SDK, check the console.";
 }
+
+export const db = firebase.database();

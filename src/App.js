@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import firebase from "firebase/app";
 import { useObject } from "react-firebase-hooks/database";
 
-const db = firebase.database();
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Room from "./Room";
+
+import { db } from "./firebase";
 
 export default function App() {
   // db.ref("now").set(Date.now());
@@ -16,9 +18,9 @@ export default function App() {
         {loading && <span>List: Loading...</span>}
         {!loading && (
           <>
-            <span>{JSON.stringify(snapshots.val())}</span>
+            <AppRouter />
             <br />
-            <Loaded snapshots={snapshots} />
+            <span>{JSON.stringify(snapshots.val())}</span>
           </>
         )}
       </div>
@@ -26,14 +28,47 @@ export default function App() {
   );
 }
 
-function Loaded({ snapshots }) {
+function AppRouter() {
+  return (
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route path="/" exact children={<Home />} />
+          <Route path="/rooms/:name">
+            <Room />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+
+function Home() {
+  const [snapshots, loading, error] = useObject(db.ref());
+  if (loading) return [];
   const roomsSnapshot = snapshots.child("rooms");
-  const rooms = roomsSnapshot.val();
+  const rooms = Object.values(roomsSnapshot.val());
+  const RoomLink = ({ name }) => {
+    return <Link to={`/rooms/${name}`}>{name}</Link>;
+  };
   return (
     <>
+      <span>rooms</span>
       <ul>
         {rooms &&
-          rooms.map((room) => <li key={room.createdAt}>{room.name}</li>)}
+          rooms.map((room) => (
+            <li key={room.createdAt}>
+              <RoomLink {...room} />
+            </li>
+          ))}
       </ul>
       <CreateRoomButton snapshot={roomsSnapshot} />
       <button onClick={() => db.ref("rooms").set(null)}>clear rooms</button>
@@ -45,9 +80,8 @@ function CreateRoomButton({ snapshot }) {
   const [name, setName] = useState("");
 
   const onClick = () => {
-    const len = snapshot.val()?.length ?? 0;
     db.ref("rooms")
-      .child(len)
+      .child(name)
       .set({ name, createdAt: Date.now() })
       .then(setName(""));
   };

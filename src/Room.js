@@ -1,10 +1,27 @@
 import React, { useState, useEffect } from "react";
-import firebase from "firebase/app";
 import Youtube from "react-youtube";
 
-function Room({ videoId, isPlaying, comments = [], startAt, stopAt }) {
-  const [player, setPlayer] = useState(null);
+import { db } from "./firebase";
+import { useObject } from "react-firebase-hooks/database";
+import { Link, useParams } from "react-router-dom";
 
+export default function Room() {
+  const { name } = useParams();
+  const ref = db.ref(`rooms/${name}`);
+  const [snapshots, loading, error] = useObject(ref);
+  return <>{snapshots && <RoomLoaded roomRef={ref} snapshots={snapshots} />}</>;
+}
+
+function RoomLoaded({ roomRef, snapshots }) {
+  const {
+    name,
+    videoId,
+    isPlaying,
+    comments = [],
+    startAt,
+    stopAt,
+  } = snapshots.val();
+  const [player, setPlayer] = useState(null);
   const onReady = (event) => {
     setPlayer(event.target);
     const currentTime = (Date.now() - startAt) / 1000;
@@ -34,22 +51,47 @@ function Room({ videoId, isPlaying, comments = [], startAt, stopAt }) {
   ]);
   return (
     <>
-      <Youtube videoId={videoId} opts={opts} onReady={onReady} />
+      room: {name}
+      <br />
+      <Input
+        defaultVal={videoId}
+        onEnter={(id) => roomRef.child("videoId").set(id)}
+      />
+      {videoId && <Youtube videoId={videoId} opts={opts} onReady={onReady} />}
+      <ToggleButton
+        roomRef={roomRef}
+        isPlaying={isPlaying}
+        disabled={!player}
+        player={player}
+      />
       <div>
         {c.map(([ms, data]) => (
           <div key={ms}>{JSON.stringify(data)}</div>
         ))}
       </div>
-      <ToggleButton isPlaying={isPlaying} disabled={!player} player={player} />
     </>
   );
 }
 
-function ToggleButton({ isPlaying, disabled = true, player }) {
+function Input({ defaultVal = "", onEnter }) {
+  const [value, setValue] = useState(defaultVal);
+
+  function onClick() {
+    onEnter(value);
+  }
+  return (
+    <>
+      <input value={value} onChange={(e) => setValue(e.target.value)} />
+      <button onClick={onClick}>send</button>
+    </>
+  );
+}
+
+function ToggleButton({ roomRef, isPlaying, disabled = true, player }) {
   const onClick = () => {
-    db.ref("isPlaying").set(!isPlaying);
-    if (!isPlaying) db.ref("startAt").set(Date.now());
-    if (isPlaying) db.ref("stopAt").set(player.getCurrentTime());
+    roomRef.child("isPlaying").set(!isPlaying);
+    if (!isPlaying) roomRef.child("startAt").set(Date.now());
+    if (isPlaying) roomRef.child("stopAt").set(player.getCurrentTime());
     console.log(player);
   };
   return (
@@ -58,5 +100,3 @@ function ToggleButton({ isPlaying, disabled = true, player }) {
     </button>
   );
 }
-
-function CommentArea({ comments }) {}
