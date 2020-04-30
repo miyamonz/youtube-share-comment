@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Youtube from "react-youtube";
+import { useRoomContext } from "./ContextRoom";
 
-export default function VideoPlayer({ roomRef, videoId, isPlaying }) {
+export default function VideoPlayer({ videoId }) {
+  const [snapshots, roomRef] = useRoomContext();
+  const { seekTo, startAt, isPlaying } = snapshots.val();
   const [player, setPlayer] = useState(null);
 
   useEffect(() => {

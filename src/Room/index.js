@@ -19,16 +19,7 @@ export default function Room() {
 
 function RoomLoaded() {
   const [snapshots, roomRef] = useRoomContext();
-  const {
-    name,
-    videoId,
-    isPlaying,
-    comments = [],
-    chats = [],
-    startAt,
-    stopAt,
-    seekTo,
-  } = snapshots.val();
+  const { videoId } = snapshots.val();
 
   function sendVideoId(id) {
     roomRef.child("videoId").set(id);
@@ -39,26 +30,31 @@ function RoomLoaded() {
   return (
     <>
       <MyInput defaultVal={videoId} onEnter={sendVideoId} />
-      {!videoId && "input youtube video id"}
-      {videoId && (
-        <>
-          <div style={{ display: "flex", height: "50vh" }}>
-            <div style={{ width: "80%", maxWidth: 640 }}>
-              <VideoPlayer {...{ roomRef, videoId, isPlaying }} />
-            </div>
-            <div style={{ height: "100%" }}>
-              <ChatArea chats={chats} chatRef={roomRef.child("chats")} />
-            </div>
-          </div>
-          <div>
-            <CommentArea
-              comments={comments}
-              commentRef={roomRef.child("comments")}
-              snapshotsVal={snapshots.val()}
-            />
-          </div>
-        </>
-      )}
+      {videoId ? <RoomLayout /> : "input youtube video id"}
+    </>
+  );
+}
+
+function RoomLayout() {
+  const [snapshots, roomRef] = useRoomContext();
+  const { videoId, comments = [], chats = [] } = snapshots.val();
+  return (
+    <>
+      <div style={{ display: "flex", height: "50vh" }}>
+        <div style={{ width: "80%", maxWidth: 640 }}>
+          <VideoPlayer {...{ videoId }} />
+        </div>
+        <div style={{ height: "100%" }}>
+          <ChatArea chats={chats} chatRef={roomRef.child("chats")} />
+        </div>
+      </div>
+      <div>
+        <CommentArea
+          comments={comments}
+          commentRef={roomRef.child("comments")}
+          snapshotsVal={snapshots.val()}
+        />
+      </div>
     </>
   );
 }
