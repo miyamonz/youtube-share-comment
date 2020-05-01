@@ -2,42 +2,41 @@ import React, { useState, useEffect } from "react";
 import MyInput from "../MyInput";
 import { useRoomContext } from "./ContextRoom";
 
+import { Duration } from "luxon";
+
 export default function CommentArea({ comments, commentRef }) {
-  const {
-    val: { isPlaying, startAt, stopAt },
-    ref: roomRef,
-  } = useRoomContext();
-  function clickTime(time) {
-    roomRef.child("seekTo").set(time);
+  const { getCurrentTime, seekTo, ref: roomRef } = useRoomContext();
+
+  function clickTime(seconds) {
+    seekTo(seconds);
   }
   function sendComment(text) {
-    const currentTime = isPlaying ? (Date.now() - startAt) / 1000 : stopAt;
-    const time = Math.floor(currentTime * 100) / 100;
-    const curInt = parseInt(time * 100, 10);
-    commentRef.child(curInt).set({
+    const time = getCurrentTime();
+    const milliInt = parseInt(time.milliseconds, 10);
+    commentRef.child(milliInt).set({
       username: "miyamonz",
       icon:
         "https://i.gyazo.com/thumb/100/f2ec5d4f2ac2c0cdd32819330acc36e3-png.png",
       text,
-      time,
+      milli: time.milliseconds,
     });
   }
 
   return (
     <div>
       {Object.values(comments).map((c) => {
-        const mm = Math.floor(c.time / 60);
-        const ss = Math.floor(c.time - mm * 60);
+        const dur = Duration.fromMillis(c.milli);
+        const timeStr = dur.toFormat("mm:ss");
         return (
-          <div key={c.time}>
+          <div key={c.milli}>
             <span>
               <a
                 onClick={(e) => {
-                  clickTime(c.time), e.preventDefault();
+                  clickTime(dur.as("seconds")), e.preventDefault();
                 }}
                 href="#"
               >
-                {mm}:{ss}
+                {timeStr}
               </a>
             </span>
             {"\t"}

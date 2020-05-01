@@ -26,8 +26,6 @@ function RoomLoaded() {
   function sendVideoId(id) {
     roomRef.child("videoId").set(id);
     roomRef.child("isPlaying").set(false);
-    roomRef.child("startAt").set(Date.now());
-    roomRef.child("stopAt").set(0);
   }
   return (
     <>
