@@ -41,10 +41,6 @@ export default function CommentArea({ comments, commentRef }) {
             </span>
             {"\t"}
             <span>{c.text}</span>
-            {"\t"}
-            <span>
-              <img src={c.icon} style={{ width: 30 }} />
-            </span>
           </div>
         );
       })}

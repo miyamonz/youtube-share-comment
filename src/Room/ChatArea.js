@@ -25,10 +25,6 @@ export default function ChatArea({ chats, chatRef, snapshotsVal }) {
               <span>{dateStr}</span>
               {"\t"}
               <span>{c.text}</span>
-              {"\t"}
-              <span>
-                <img src={c.icon} style={{ width: 20 }} />
-              </span>
             </div>
           );
         })}
