@@ -7,9 +7,6 @@ export default function ChatArea({ chats, chatRef, snapshotsVal }) {
   function onEnter(text) {
     const time = Date.now();
     chatRef.child(time).set({
-      username: "miyamonz",
-      icon:
-        "https://i.gyazo.com/thumb/100/f2ec5d4f2ac2c0cdd32819330acc36e3-png.png",
       text,
       time,
     });

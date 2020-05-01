@@ -14,9 +14,6 @@ export default function CommentArea({ comments, commentRef }) {
     const time = getCurrentTime();
     const milliInt = parseInt(time.milliseconds, 10);
     commentRef.child(milliInt).set({
-      username: "miyamonz",
-      icon:
-        "https://i.gyazo.com/thumb/100/f2ec5d4f2ac2c0cdd32819330acc36e3-png.png",
       text,
       milli: time.milliseconds,
     });
