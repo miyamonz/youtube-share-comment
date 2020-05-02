@@ -34,14 +34,17 @@ export const Provider = ({ dbRef, children }) => {
 
   function togglePlay() {
     const { isPlaying } = snapshots.val();
-    dbRef.child("isPlaying").set(!isPlaying);
+    setPlay(!isPlaying);
+  }
+  function setPlay(bool) {
+    dbRef.child("isPlaying").set(bool);
 
     const param = {
       currentTime: Date.now(),
       playTime: getCurrentTime().as("seconds"),
     };
-    if (!isPlaying) dbRef.child("startAt").set(param);
-    if (isPlaying) dbRef.child("stopAt").set(param);
+    if (bool) dbRef.child("startAt").set(param);
+    else dbRef.child("stopAt").set(param);
   }
 
   const value = {
@@ -49,6 +52,7 @@ export const Provider = ({ dbRef, children }) => {
     getCurrentTime,
     seekTo,
     togglePlay,
+    setPlay,
     snapshots,
     dbRef,
   };

@@ -37,13 +37,29 @@ export default function VideoPlayer({ videoId }) {
     if (isPlaying) event.target.seekTo(seconds);
     else event.target.seekTo(seconds).pauseVideo();
   };
+
+  const { setPlay } = useVideoContext();
+  function onStateChange(e) {
+    console.log(e);
+    const play = 1;
+    const stop = 2;
+    if (e.data == play) setPlay(true);
+    if (e.data == stop) setPlay(false);
+  }
   const { togglePlay } = useVideoContext();
 
   return (
     <>
+      {player && (
+        <div style={{ float: "right" }}>
+          volume
+          <SoundVolumeInput {...{ player }} />
+        </div>
+      )}
       <Youtube
         videoId={videoId}
         opts={opts}
+        onStateChange={onStateChange}
         onReady={onReady}
         style={{ width: "100%" }}
       />
@@ -81,4 +97,18 @@ function PlayTimeStr() {
   }, [isPlaying, seekToTime, updated]);
 
   return <span>{time.toFormat("mm:ss")}</span>;
+}
+
+function SoundVolumeInput({ player }) {
+  const [volume, setVolume] = useState(() => player.getVolume());
+  console.log(volume);
+  function onChange(e) {
+    const v = e.target.value;
+    setVolume(v);
+    player.setVolume(v);
+  }
+
+  return (
+    <input type="range" min="o" max="100" value={volume} onChange={onChange} />
+  );
 }
