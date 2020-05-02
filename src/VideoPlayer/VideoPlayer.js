@@ -100,7 +100,7 @@ function PlayTimeStr() {
 }
 
 function SoundVolumeInput({ player }) {
-  const [volume, setVolume] = useState(() => 10);
+  const [volume, setVolume] = useState(() => 1);
   console.log(volume);
   function onChange(e) {
     const v = e.target.value;

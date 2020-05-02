@@ -15,10 +15,7 @@ export default function Container(props) {
   const [snapshots] = useList(videoRef);
 
   const currentVideoKey = val.currentVideoKey;
-  const [video, setVideo] = useState(() =>
-    currentVideoKey ? videoRef.child(currentVideoKey) : null
-  );
-  console.log(currentVideoKey, video);
+  const video = currentVideoKey ? videoRef.child(currentVideoKey) : null;
   const lastVideo = snapshots[snapshots.length - 1];
 
   function sendVideoData(data) {
@@ -28,7 +25,6 @@ export default function Container(props) {
     dbRef.child("seekToTime").set(0);
   }
   function selectVideo(videoSnapshot) {
-    setVideo(videoSnapshot);
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
   }
   return (
