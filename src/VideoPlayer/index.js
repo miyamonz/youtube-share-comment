@@ -27,6 +27,13 @@ export default function Container(props) {
   function selectVideo(videoSnapshot) {
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
   }
+  useEffect(() => {
+    if (currentVideoKey) {
+      const newVideo = videoRef.child(currentVideoKey).ref;
+      newVideo.child("isPlaying").set(false);
+      newVideo.child("seekToTime").set(0);
+    }
+  }, [currentVideoKey]);
   return (
     <>
       <ul>
