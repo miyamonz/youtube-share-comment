@@ -3,40 +3,56 @@ import Youtube from "react-youtube";
 import { useRoomContext } from "../ContextRoom";
 
 import useTick from "./useTick";
+import Seekbar from "./Seekbar";
 
 const opts = {
   width: "100%",
   playerVars: {
     // https://developers.google.com/youtube/player_parameters
     autoplay: 0,
+    controls: 0,
     modestbranding: 1,
     iv_load_policy: 3,
     disablekb: 1,
   },
 };
 
-export default function VideoPlayer({ videoId }) {
+function useSeekEffect(player) {
   const {
-    getCurrentTime,
-    val: { seekToTime, isPlaying },
+    val: { seekToTime },
     ref: roomRef,
   } = useRoomContext();
-  const [player, setPlayer] = useState(null);
 
-  // control seekbar by seekToTime
   useEffect(() => {
     if (player && seekToTime) {
       player.seekTo(seekToTime);
       roomRef.child("seekToTime").set(null);
     }
   }, [player, seekToTime]);
+}
 
-  // control player corresponding to db state
+function usePlayEffect(player) {
+  const {
+    val: { isPlaying },
+  } = useRoomContext();
+
   useEffect(() => {
     if (player) {
       isPlaying ? player.playVideo() : player.pauseVideo();
     }
   }, [isPlaying, player]);
+}
+export default function VideoPlayer({ videoId }) {
+  const {
+    getCurrentTime,
+    val: { isPlaying },
+  } = useRoomContext();
+
+  const [player, setPlayer] = useState(null);
+  // control seekbar by db state
+  useSeekEffect(player);
+  // control player by db state
+  usePlayEffect(player);
 
   const onReady = (event) => {
     setPlayer(event.target);
@@ -79,47 +95,6 @@ function ToggleButton({ isPlaying, disabled = true }) {
     >
       {isPlaying ? "Puase" : "Play"}
     </button>
-  );
-}
-
-function Seekbar({ duration, isPlaying }) {
-  const {
-    seekTo,
-    getCurrentTime,
-    val: { seekToTime },
-  } = useRoomContext();
-
-  const [updated, setUpdated] = useState();
-  const [time, setTime] = useState(() => getCurrentTime().as("seconds"));
-
-  useEffect(() => {
-    if (isPlaying) {
-      let id = setTimeout(() => {
-        setTime(getCurrentTime().as("seconds"));
-        setUpdated([]);
-      }, 100);
-      return () => clearTimeout(id);
-    }
-  }, [time, updated, isPlaying]);
-
-  useEffect(() => {
-    if (seekToTime) setTime(seekToTime);
-  }, [seekToTime]);
-
-  function onChange(e) {
-    const sec = parseFloat(e.target.value, 10);
-    seekTo(sec);
-    setTime(sec);
-  }
-  return (
-    <input
-      type="range"
-      max={duration}
-      step={0.1}
-      style={{ width: "100%" }}
-      value={time}
-      onChange={onChange}
-    />
   );
 }
 
