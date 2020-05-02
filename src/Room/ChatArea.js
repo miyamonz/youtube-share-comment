@@ -27,7 +27,8 @@ const MaxHeight = styled.div`
   height: 100%;
 `;
 const Scroll = styled.div`
-  overflow: scroll;
+  height: 100%;
+  overflow: auto;
 `;
 
 function Container({ chatRef, ...props }) {
