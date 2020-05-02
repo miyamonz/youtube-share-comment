@@ -1,9 +1,36 @@
 import React, { useState, useEffect } from "react";
 import MyInput from "../MyInput";
-
 import { DateTime } from "luxon";
 
-export default function ChatArea({ chats, chatRef, snapshotsVal }) {
+import styled from "styled-components";
+
+function ChatArea({ chats: _chats }) {
+  const chats = Object.values(_chats);
+  return (
+    <>
+      {chats.map((c) => {
+        const date = DateTime.fromMillis(c.time);
+        const dateStr = date.toFormat("HH:mm");
+        return (
+          <div key={c.time}>
+            <span>{dateStr}</span>
+            {"\t"}
+            <span>{c.text}</span>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+const MaxHeight = styled.div`
+  height: 100%;
+`;
+const Scroll = styled.div`
+  overflow: scroll;
+`;
+
+function Container({ chatRef, ...props }) {
   function onEnter(text) {
     const time = Date.now();
     chatRef.child(time).set({
@@ -12,21 +39,13 @@ export default function ChatArea({ chats, chatRef, snapshotsVal }) {
     });
   }
   return (
-    <div style={{ height: "100%" }}>
-      <div style={{ overflow: "scroll" }}>
-        {Object.values(chats).map((c) => {
-          const date = DateTime.fromMillis(c.time);
-          const dateStr = date.toFormat("HH:mm");
-          return (
-            <div className="divide-y divide-blue-100" key={c.time}>
-              <span>{dateStr}</span>
-              {"\t"}
-              <span>{c.text}</span>
-            </div>
-          );
-        })}
-      </div>
+    <MaxHeight>
+      <Scroll>
+        <ChatArea {...props} />
+      </Scroll>
       <MyInput onEnter={onEnter} />
-    </div>
+    </MaxHeight>
   );
 }
+
+export default Container;
