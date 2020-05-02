@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import MyInput from "../MyInput";
-import { useRoomContext } from "./ContextRoom";
 
 import { Duration } from "luxon";
 
-export default function CommentArea({ comments, commentRef }) {
-  const { getCurrentTime, seekTo, ref: roomRef } = useRoomContext();
+export default function CommentArea({ context }) {
+  const {
+    getCurrentTime,
+    seekTo,
+    val: { comments = [] },
+    dbRef,
+  } = context();
+
+  const commentRef = dbRef.child("comments");
 
   function clickTime(seconds) {
     seekTo(seconds);
