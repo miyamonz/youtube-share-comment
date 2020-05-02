@@ -40,7 +40,6 @@ export default function VideoPlayer({ videoId }) {
 
   const { setPlay } = useVideoContext();
   function onStateChange(e) {
-    console.log(e);
     const play = 1;
     const stop = 2;
     if (e.data == play) setPlay(true);
@@ -101,7 +100,6 @@ function PlayTimeStr() {
 
 function SoundVolumeInput({ player }) {
   const [volume, setVolume] = useState(() => 1);
-  console.log(volume);
   function onChange(e) {
     const v = e.target.value;
     setVolume(v);
