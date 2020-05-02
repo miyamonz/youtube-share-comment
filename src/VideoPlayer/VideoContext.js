@@ -17,7 +17,7 @@ export const Provider = ({ dbRef, children }) => {
       isPlaying,
     };
     const _ =
-      (isPlaying && !!startAt?.currentTime && !!startAt.playTime
+      (isPlaying && !!startAt?.currentTime
         ? (Date.now() - startAt.currentTime) / 1000 + startAt.playTime
         : stopAt?.playTime) || 0;
 
