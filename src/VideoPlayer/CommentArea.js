@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { Duration } from "luxon";
+import styled from "styled-components";
+
 import MyInput from "../MyInput";
 
-import { Duration } from "luxon";
-
-export default function CommentArea({ context }) {
+function CommentArea({ context }) {
   const {
     getCurrentTime,
     seekTo,
@@ -13,9 +14,6 @@ export default function CommentArea({ context }) {
 
   const commentRef = dbRef.child("comments");
 
-  function clickTime(seconds) {
-    seekTo(seconds);
-  }
   function sendComment(text) {
     const time = getCurrentTime();
     commentRef.push({
@@ -28,21 +26,21 @@ export default function CommentArea({ context }) {
     commentRef.child(key).remove();
   }
 
-  const _comments = Object.entries(comments)
-    .map(([key, values]) => ({
-      key,
-      ...values,
-    }))
-    .sort((a, b) => a.milli < b.milli);
+  const _comments = Object.entries(comments).map(([key, values]) => ({
+    key,
+    ...values,
+  }));
+  _comments.sort((a, b) => (a.milli < b.milli ? -1 : 1));
 
   return (
     <div>
-      {_comments.map((c) => {
+      {_comments.reduce((prev, c) => {
         const dur = Duration.fromMillis(c.milli);
-        const onClick = () => clickTime(dur.as("seconds"));
+        const onClick = () => seekTo(dur.as("seconds"));
         const timeStr = dur.toFormat("mm:ss");
-        return (
-          <div key={c.key}>
+        const diff = (c.milli - (prev[prev.length - 1]?.milli ?? 0)) / 1000;
+        const _ = (
+          <div key={c.key} style={{ marginTop: diff / 5 }}>
             <span>
               <a onClick={(e) => (onClick(), e.preventDefault())} href="#">
                 {timeStr}
@@ -56,8 +54,35 @@ export default function CommentArea({ context }) {
             </span>
           </div>
         );
-      })}
+        return [...prev, _];
+      }, [])}
+    </div>
+  );
+}
+
+const Scroll = styled.div`
+  height: 40vh;
+  overflow: auto;
+`;
+function CommentAreaLayout(props) {
+  const { getCurrentTime, dbRef } = props.context();
+  const commentRef = dbRef.child("comments");
+
+  function sendComment(text) {
+    const time = getCurrentTime();
+    commentRef.push({
+      text,
+      milli: time.milliseconds,
+    });
+  }
+  return (
+    <div>
+      <Scroll>
+        <CommentArea {...props} />
+      </Scroll>
       <MyInput onEnter={sendComment} />
     </div>
   );
 }
+
+export default CommentAreaLayout;

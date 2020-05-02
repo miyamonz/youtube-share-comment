@@ -5,6 +5,7 @@ export default function MyInput({ defaultVal = "", onEnter }) {
 
   function onClick() {
     onEnter(value);
+    setValue("");
   }
   return (
     <>
