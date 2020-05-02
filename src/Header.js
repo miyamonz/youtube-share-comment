@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { Switch, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-export default function Header() {
+const Nav = styled.nav.attrs({ className: `navbar is-light` })``;
+const NavbarMenu = styled.div.attrs({ className: `navbar-menu` })``;
+const NavbarStart = styled.div.attrs({ className: `navbar-start` })``;
+const NavbarItem = styled.a.attrs({ className: `navbar-item` })``;
+const NavbarLink = styled(Link).attrs({ className: `navbar-item` })``;
+
+function Header() {
   return (
-    <>
-      <nav>
-        <ul className="flex">
-          <li className="mr-6">
-            <Link className="text-blue-500 hover:text-blue-800" to="/">
-              Home
-            </Link>
-          </li>
-        </ul>
-      </nav>
-    </>
+    <Nav>
+      <NavbarMenu>
+        <NavbarStart>
+          <NavbarLink to="/">Home</NavbarLink>
+        </NavbarStart>
+      </NavbarMenu>
+    </Nav>
   );
 }
+
+export default Header;

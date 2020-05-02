@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useObject } from "react-firebase-hooks/database";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import styled from "styled-components";
+
 import Room from "./Room/index.js";
+import Header from "./Header";
+import CreateRoomInput from "./CreateRoomInput";
 
 import { db } from "./firebase";
-
-import Header from "./Header";
 
 export default function App() {
   const [snapshots, loading, error] = useObject(db.ref());
@@ -28,9 +30,8 @@ export default function App() {
 function AppRouter() {
   return (
     <Router>
-      <div>
-        <Header />
-
+      <Header />
+      <div className="section">
         <Switch>
           <Route path="/" exact children={<Home />} />
           <Route path="/rooms/:name">
@@ -42,6 +43,14 @@ function AppRouter() {
   );
 }
 
+const RoomLink = ({ name, ...props }) => {
+  return (
+    <Link to={`/rooms/${name}`} {...props}>
+      {name}
+    </Link>
+  );
+};
+const RoomLinkStyled = styled(RoomLink).attrs({ className: `list-item` })``;
 function Home() {
   const [snapshots, loading, error] = useObject(db.ref());
   if (loading) return [];
@@ -52,61 +61,18 @@ function Home() {
   } catch {
     // there is no rooms
   }
-  const RoomLink = ({ name }) => {
-    return (
-      <Link
-        className="text-blue-600 visited:text-purple-600 "
-        to={`/rooms/${name}`}
-      >
-        {name}
-      </Link>
-    );
-  };
+
   return (
     <>
-      <table className="table-auto">
-        <thead>
-          <tr>
-            <th className="w-1/2 px-4 py-2">rooms</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rooms &&
-            rooms.map((room) => (
-              <tr key={room.createdAt}>
-                <td className="border px-4 py-2">
-                  <RoomLink {...room} />
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <h2 className="title">rooms</h2>
+      <div className="list is-hoverable">
+        {rooms &&
+          rooms.map((room) => (
+            <RoomLinkStyled key={room.createdAt} name={room.name} />
+          ))}
+      </div>
       <br />
-      <CreateRoomButton snapshot={roomsSnapshot} />
-    </>
-  );
-}
-
-function CreateRoomButton({ snapshot }) {
-  const [name, setName] = useState("");
-
-  const onClick = () => {
-    db.ref("rooms")
-      .child(name)
-      .set({ name, createdAt: Date.now() })
-      .then(setName(""));
-  };
-
-  return (
-    <>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <button onClick={onClick} disabled={name == ""}>
-        create room
-      </button>
+      <CreateRoomInput rooms={rooms} />
     </>
   );
 }
