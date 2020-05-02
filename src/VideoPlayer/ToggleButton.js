@@ -4,7 +4,7 @@ import styled from "styled-components";
 function ToggleButton({ onClick, isPlaying, disabled = true, ...props }) {
   return (
     <button type="button" onClick={onClick} disabled={disabled} {...props}>
-      {isPlaying ? "Puase" : "Play"}
+      {isPlaying ? "Pause" : "Play"}
     </button>
   );
 }
