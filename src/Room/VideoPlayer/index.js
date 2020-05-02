@@ -4,6 +4,18 @@ import { useRoomContext } from "../ContextRoom";
 
 import useTick from "./useTick";
 
+const opts = {
+  width: "100%",
+  playerVars: {
+    // https://developers.google.com/youtube/player_parameters
+    autoplay: 0,
+    controls: 0,
+    modestbranding: 1,
+    iv_load_policy: 3,
+    disablekb: 1,
+  },
+};
+
 export default function VideoPlayer({ videoId }) {
   const {
     getCurrentTime,
@@ -25,17 +37,6 @@ export default function VideoPlayer({ videoId }) {
     }
   }, [isPlaying, player]);
 
-  const opts = {
-    width: "100%",
-    playerVars: {
-      // https://developers.google.com/youtube/player_parameters
-      autoplay: 0,
-      controls: 0,
-      modestbranding: 1,
-      iv_load_policy: 3,
-      disablekb: 1,
-    },
-  };
   const onReady = (event) => {
     setPlayer(event.target);
     const seconds = getCurrentTime().seconds;
@@ -66,6 +67,8 @@ export default function VideoPlayer({ videoId }) {
           </div>
         </div>
       )}
+      <hr />
+      <CommentArea comments={comments} commentRef={roomRef.child("comments")} />
     </>
   );
 }

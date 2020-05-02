@@ -13,7 +13,6 @@ export default function Header() {
           </li>
         </ul>
       </nav>
-      room: {name}
     </>
   );
 }

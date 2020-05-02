@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import VideoPlayer from "./VideoPlayer/index.js";
 import CommentArea from "./CommentArea";
 import ChatArea from "./ChatArea";
-import MyInput from "../MyInput";
+import URLInput from "./URLInput";
 
 export default function Room() {
   const { name } = useParams();
@@ -19,18 +19,21 @@ export default function Room() {
 
 function RoomLoaded() {
   const {
-    val: { videoId },
+    val: { videoType },
     ref: roomRef,
   } = useRoomContext();
 
-  function sendVideoId(id) {
-    roomRef.child("videoId").set(id);
+  const url = videoType ? `https://youtube.com/?v=${videoType.id}` : "";
+  function sendVideoData(data) {
+    roomRef.child("videoType").set(data);
     roomRef.child("isPlaying").set(false);
   }
   return (
     <>
-      <MyInput defaultVal={videoId} onEnter={sendVideoId} />
-      {videoId ? <RoomLayout /> : "input youtube video id"}
+      <div>
+        <URLInput defaultVal={url} onChange={sendVideoData} />
+      </div>
+      {videoType ? <RoomLayout /> : "input youtube video id"}
     </>
   );
 }
@@ -43,19 +46,9 @@ function RoomLayout() {
   return (
     <>
       <div style={{ display: "flex", height: 420 }}>
-        <div style={{ width: "80%", maxWidth: 640 }}>
-          <VideoPlayer {...{ videoId }} />
+        <div style={{ width: "100%" }}>
+          <VideoPlayer {...{ videoId, comments }} />
         </div>
-        <div style={{ height: "100%" }}>
-          <ChatArea chats={chats} chatRef={roomRef.child("chats")} />
-        </div>
-      </div>
-      <hr />
-      <div>
-        <CommentArea
-          comments={comments}
-          commentRef={roomRef.child("comments")}
-        />
       </div>
     </>
   );
