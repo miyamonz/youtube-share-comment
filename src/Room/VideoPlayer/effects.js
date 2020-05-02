@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-import { useRoomContext } from "../ContextRoom";
+import { useVideoContext } from "./VideoContext";
 
 export function useSeekEffect(player) {
   const {
     val: { seekToTime },
-    ref: roomRef,
-  } = useRoomContext();
+    dbRef,
+  } = useVideoContext();
 
   useEffect(() => {
     if (player && seekToTime) {
       player.seekTo(seekToTime);
-      roomRef.child("seekToTime").set(null);
+      dbRef.child("seekToTime").set(null);
     }
   }, [player, seekToTime]);
 }
@@ -18,7 +18,7 @@ export function useSeekEffect(player) {
 export function usePlayEffect(player) {
   const {
     val: { isPlaying },
-  } = useRoomContext();
+  } = useVideoContext();
 
   useEffect(() => {
     if (player) {

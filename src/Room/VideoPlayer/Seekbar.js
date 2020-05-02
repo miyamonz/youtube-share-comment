@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useRoomContext } from "../ContextRoom";
+import { useVideoContext } from "./VideoContext";
 
 function Seekbar({ duration, isPlaying }) {
   const {
     seekTo,
     getCurrentTime,
     val: { seekToTime },
-  } = useRoomContext();
+  } = useVideoContext();
 
   const [updated, setUpdated] = useState();
   const [time, setTime] = useState(() => getCurrentTime().as("seconds"));

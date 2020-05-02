@@ -4,9 +4,44 @@ import Youtube from "react-youtube";
 import { useRoomContext } from "../ContextRoom";
 import { useSeekEffect, usePlayEffect } from "./effects";
 
+import URLInput from "../URLInput";
+
 import useTick from "./useTick";
 import Seekbar from "./Seekbar";
 import ToggleButton from "./ToggleButton";
+
+import { Provider, useVideoContext } from "./VideoContext";
+
+export default function Container(props) {
+  const { ref: roomRef } = useRoomContext();
+  const videoRef = roomRef.child("video");
+  return (
+    <>
+      <Provider dbRef={videoRef}>
+        <InVideoContext />
+      </Provider>
+    </>
+  );
+}
+function InVideoContext() {
+  const {
+    val: { videoType },
+    dbRef,
+  } = useVideoContext();
+  const url = videoType ? `https://youtube.com/?v=${videoType.id}` : "";
+  function sendVideoData(data) {
+    dbRef.child("videoType").set(data);
+    dbRef.child("isPlaying").set(false);
+  }
+  return (
+    <>
+      <URLInput defaultVal={url} onChange={sendVideoData} />
+      {!videoType && "enter youtube URL"}
+
+      {videoType && <VideoPlayer videoId={videoType.id} />}
+    </>
+  );
+}
 
 const opts = {
   width: "100%",
@@ -20,11 +55,11 @@ const opts = {
   },
 };
 
-export default function VideoPlayer({ videoId }) {
+function VideoPlayer({ videoId }) {
   const {
     getCurrentTime,
     val: { isPlaying },
-  } = useRoomContext();
+  } = useVideoContext();
 
   const [player, setPlayer] = useState(null);
   // control seekbar by db state
@@ -38,7 +73,7 @@ export default function VideoPlayer({ videoId }) {
     if (isPlaying) event.target.seekTo(seconds);
     else event.target.seekTo(seconds).pauseVideo();
   };
-  const { togglePlay } = useRoomContext();
+  const { togglePlay } = useVideoContext();
 
   return (
     <>
@@ -72,7 +107,7 @@ function PlayTimeStr() {
   const {
     getCurrentTime,
     val: { isPlaying, seekToTime },
-  } = useRoomContext();
+  } = useVideoContext();
 
   const [updated] = useTick(1000);
   const [time, setTime] = useState(() => getCurrentTime());

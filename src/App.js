@@ -46,7 +46,12 @@ function Home() {
   const [snapshots, loading, error] = useObject(db.ref());
   if (loading) return [];
   const roomsSnapshot = snapshots.child("rooms");
-  const rooms = Object.values(roomsSnapshot.val());
+  let rooms;
+  try {
+    rooms = Object.values(roomsSnapshot.val());
+  } catch {
+    // there is no rooms
+  }
   const RoomLink = ({ name }) => {
     return (
       <Link
@@ -59,7 +64,6 @@ function Home() {
   };
   return (
     <>
-      <span>rooms</span>
       <table className="table-auto">
         <thead>
           <tr>
