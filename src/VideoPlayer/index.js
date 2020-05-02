@@ -15,8 +15,12 @@ export default function Container(props) {
   const [snapshots] = useList(videoRef);
 
   const currentVideoKey = val.currentVideoKey;
-  const video = currentVideoKey ? videoRef.child(currentVideoKey) : null;
-  const lastVideo = snapshots[snapshots.length - 1];
+  const [video, setVideo] = useState();
+  useEffect(() => {
+    if (currentVideoKey) {
+      setVideo(videoRef.child(currentVideoKey));
+    }
+  }, [currentVideoKey]);
 
   function sendVideoData(data) {
     const dbRef = roomRef.child("videos").push();
@@ -27,13 +31,6 @@ export default function Container(props) {
   function selectVideo(videoSnapshot) {
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
   }
-  useEffect(() => {
-    if (currentVideoKey) {
-      const newVideo = videoRef.child(currentVideoKey).ref;
-      newVideo.child("isPlaying").set(false);
-      newVideo.child("seekToTime").set(0);
-    }
-  }, [currentVideoKey]);
   return (
     <>
       <ul>
