@@ -3,10 +3,10 @@ import MyInput from "./MyInput";
 
 import getVideoId from "get-video-id";
 
-export default function URLInput({ defaultVal, onChange }) {
-  function onEnter(text) {
+export default function URLInput({ defaultVal, onEnter }) {
+  function _onEnter(text) {
     const videoType = getVideoId(text);
-    onChange(videoType);
+    onEnter(videoType);
   }
-  return <MyInput defaultVal={defaultVal} onEnter={onEnter} />;
+  return <MyInput defaultVal={defaultVal} onEnter={_onEnter} />;
 }

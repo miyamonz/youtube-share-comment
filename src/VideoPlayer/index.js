@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRoomContext } from "../Room/ContextRoom";
-import { useList } from "react-firebase-hooks/database";
 
+import VideoList from "./VideoList";
 import URLInput from "../URLInput";
+
 import VideoPlayer from "./VideoPlayer";
 import CommentArea from "./CommentArea";
 
@@ -10,17 +11,11 @@ import { Provider, useVideoContext } from "./VideoContext";
 
 export default function Container(props) {
   const { val, ref: roomRef } = useRoomContext();
-  const videoRef = roomRef.child("videos").orderByKey().ref;
 
-  const [snapshots] = useList(videoRef);
-
+  const videosRef = roomRef.child("videos").orderByKey().ref;
   const currentVideoKey = val.currentVideoKey;
+
   const [video, setVideo] = useState();
-  useEffect(() => {
-    if (currentVideoKey) {
-      setVideo(videoRef.child(currentVideoKey));
-    }
-  }, [currentVideoKey]);
 
   function sendVideoData(data) {
     const dbRef = roomRef.child("videos").push();
@@ -30,34 +25,29 @@ export default function Container(props) {
   }
   function selectVideo(videoSnapshot) {
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
+    setVideo(videoSnapshot);
   }
   return (
-    <>
-      <ul>
-        {snapshots.map((s) => {
-          return (
-            <li key={s.key}>
-              <a
-                onClick={(e) => {
-                  selectVideo(s);
-                  e.preventDefault();
-                }}
-                href="#"
-              >
-                {s.toJSON().videoType.id}
-              </a>
-              {s.key === video?.key && "←"}
-            </li>
-          );
-        })}
-      </ul>
-      <URLInput defaultVal={""} onChange={sendVideoData} />
-      {video && (
-        <Provider dbRef={video.ref}>
-          <InVideoContext />
-        </Provider>
-      )}
-    </>
+    <div className="tile is-ancestor">
+      <div className="tile is-3">
+        <div>
+          <VideoList
+            {...{ videosRef, currentVideoKey }}
+            onSelect={selectVideo}
+          />
+          <URLInput defaultVal={""} onEnter={sendVideoData} />
+        </div>
+      </div>
+      <div className="tile">
+        <div className="tile is-child">
+          {video && (
+            <Provider dbRef={video.ref}>
+              <InVideoContext />
+            </Provider>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 function InVideoContext() {
@@ -70,10 +60,10 @@ function InVideoContext() {
       {!videoType && "enter youtube URL"}
 
       {videoType && (
-        <div>
+        <>
           <VideoPlayer videoId={videoType.id} />
           <CommentArea context={useVideoContext} />
-        </div>
+        </>
       )}
     </>
   );
