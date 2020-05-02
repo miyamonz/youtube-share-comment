@@ -108,6 +108,10 @@ function SoundVolumeInput({ player }) {
     player.setVolume(v);
   }
 
+  useEffect(() => {
+    player.setVolume(volume);
+  }, [volume]);
+
   return (
     <input type="range" min="o" max="100" value={volume} onChange={onChange} />
   );
