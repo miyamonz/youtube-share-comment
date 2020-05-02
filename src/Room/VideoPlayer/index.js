@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import Youtube from "react-youtube";
 import { useRoomContext } from "../ContextRoom";
+import { useSeekEffect, usePlayEffect } from "./effects";
 
 import useTick from "./useTick";
 import Seekbar from "./Seekbar";
+import ToggleButton from "./ToggleButton";
 
 const opts = {
   width: "100%",
@@ -17,31 +20,6 @@ const opts = {
   },
 };
 
-function useSeekEffect(player) {
-  const {
-    val: { seekToTime },
-    ref: roomRef,
-  } = useRoomContext();
-
-  useEffect(() => {
-    if (player && seekToTime) {
-      player.seekTo(seekToTime);
-      roomRef.child("seekToTime").set(null);
-    }
-  }, [player, seekToTime]);
-}
-
-function usePlayEffect(player) {
-  const {
-    val: { isPlaying },
-  } = useRoomContext();
-
-  useEffect(() => {
-    if (player) {
-      isPlaying ? player.playVideo() : player.pauseVideo();
-    }
-  }, [isPlaying, player]);
-}
 export default function VideoPlayer({ videoId }) {
   const {
     getCurrentTime,
@@ -60,6 +38,8 @@ export default function VideoPlayer({ videoId }) {
     if (isPlaying) event.target.seekTo(seconds);
     else event.target.seekTo(seconds).pauseVideo();
   };
+  const { togglePlay } = useRoomContext();
+
   return (
     <>
       <Youtube
@@ -70,7 +50,11 @@ export default function VideoPlayer({ videoId }) {
       />
       {player && (
         <div style={{ display: "flex" }}>
-          <ToggleButton isPlaying={isPlaying} disabled={!player} />
+          <ToggleButton
+            isPlaying={isPlaying}
+            disabled={!player}
+            onClick={togglePlay}
+          />
           <div style={{ flex: 1 }}>
             <Seekbar isPlaying={isPlaying} duration={player.getDuration()} />
           </div>
@@ -81,20 +65,6 @@ export default function VideoPlayer({ videoId }) {
       )}
       <hr />
     </>
-  );
-}
-
-function ToggleButton({ isPlaying, disabled = true }) {
-  const { togglePlay } = useRoomContext();
-  return (
-    <button
-      type="button"
-      onClick={togglePlay}
-      disabled={disabled}
-      style={{ fontSize: 30, width: "100px" }}
-    >
-      {isPlaying ? "Puase" : "Play"}
-    </button>
   );
 }
 
