@@ -46,13 +46,14 @@ export default function VideoPlayer({ videoId }) {
     if (e.data == stop) setPlay(false);
   }
   const { togglePlay } = useVideoContext();
+  const state = useState(() => 5);
 
   return (
     <>
       {player && (
         <div style={{ float: "right" }}>
           volume
-          <SoundVolumeInput {...{ player }} />
+          <SoundVolumeInput {...{ state, player }} />
         </div>
       )}
       <Youtube
@@ -98,8 +99,8 @@ function PlayTimeStr() {
   return <span>{time.toFormat("mm:ss")}</span>;
 }
 
-function SoundVolumeInput({ player }) {
-  const [volume, setVolume] = useState(() => 1);
+function SoundVolumeInput({ state, player }) {
+  const [volume, setVolume] = state;
   function onChange(e) {
     const v = e.target.value;
     setVolume(v);
@@ -111,6 +112,6 @@ function SoundVolumeInput({ player }) {
   }, [volume]);
 
   return (
-    <input type="range" min="o" max="100" value={volume} onChange={onChange} />
+    <input type="range" min="0" max="100" value={volume} onChange={onChange} />
   );
 }
