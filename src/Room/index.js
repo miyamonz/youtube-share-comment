@@ -33,7 +33,7 @@ function RoomLoaded() {
       <div>
         <URLInput defaultVal={url} onChange={sendVideoData} />
       </div>
-      {videoType ? <RoomLayout /> : "input youtube video id"}
+      {videoType ? <RoomLayout /> : "input youtube URL"}
     </>
   );
 }

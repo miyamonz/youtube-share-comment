@@ -9,7 +9,6 @@ const opts = {
   playerVars: {
     // https://developers.google.com/youtube/player_parameters
     autoplay: 0,
-    controls: 0,
     modestbranding: 1,
     iv_load_policy: 3,
     disablekb: 1,
@@ -24,6 +23,7 @@ export default function VideoPlayer({ videoId }) {
   } = useRoomContext();
   const [player, setPlayer] = useState(null);
 
+  // control seekbar by seekToTime
   useEffect(() => {
     if (player && seekToTime) {
       player.seekTo(seekToTime);
@@ -31,6 +31,7 @@ export default function VideoPlayer({ videoId }) {
     }
   }, [player, seekToTime]);
 
+  // control player corresponding to db state
   useEffect(() => {
     if (player) {
       isPlaying ? player.playVideo() : player.pauseVideo();
@@ -39,7 +40,7 @@ export default function VideoPlayer({ videoId }) {
 
   const onReady = (event) => {
     setPlayer(event.target);
-    const seconds = getCurrentTime().seconds;
+    const seconds = getCurrentTime().as("seconds");
     if (isPlaying) event.target.seekTo(seconds);
     else event.target.seekTo(seconds).pauseVideo();
   };
@@ -53,44 +54,26 @@ export default function VideoPlayer({ videoId }) {
       />
       {player && (
         <div style={{ display: "flex" }}>
-          <ToggleButton
-            roomRef={roomRef}
-            isPlaying={isPlaying}
-            player={player}
-            disabled={!player}
-          />
+          <ToggleButton isPlaying={isPlaying} disabled={!player} />
           <div style={{ flex: 1 }}>
-            <Seekbar roomRef={roomRef} isPlaying={isPlaying} player={player} />
+            <Seekbar isPlaying={isPlaying} duration={player.getDuration()} />
           </div>
           <div>
-            <PlayTime />
+            <PlayTimeStr />
           </div>
         </div>
       )}
       <hr />
-      <CommentArea comments={comments} commentRef={roomRef.child("comments")} />
     </>
   );
 }
 
-function ToggleButton({ roomRef, isPlaying, disabled = true, player }) {
-  const onClick = () => {
-    roomRef.child("isPlaying").set(!isPlaying);
-    // start
-    if (!isPlaying)
-      roomRef
-        .child("startAt")
-        .set({ currentTime: Date.now(), playTime: player.getCurrentTime() });
-    //stop
-    if (isPlaying)
-      roomRef
-        .child("stopAt")
-        .set({ currentTime: Date.now(), playTime: player.getCurrentTime() });
-  };
+function ToggleButton({ isPlaying, disabled = true }) {
+  const { togglePlay } = useRoomContext();
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={togglePlay}
       disabled={disabled}
       style={{ fontSize: 30, width: "100px" }}
     >
@@ -99,20 +82,20 @@ function ToggleButton({ roomRef, isPlaying, disabled = true, player }) {
   );
 }
 
-function Seekbar({ player, roomRef, isPlaying }) {
+function Seekbar({ duration, isPlaying }) {
   const {
     seekTo,
+    getCurrentTime,
     val: { seekToTime },
   } = useRoomContext();
-  const duration = player.getDuration();
 
   const [updated, setUpdated] = useState();
-  const [time, setTime] = useState(() => player.getCurrentTime());
+  const [time, setTime] = useState(() => getCurrentTime().as("seconds"));
 
   useEffect(() => {
     if (isPlaying) {
       let id = setTimeout(() => {
-        setTime(player.getCurrentTime());
+        setTime(getCurrentTime().as("seconds"));
         setUpdated([]);
       }, 100);
       return () => clearTimeout(id);
@@ -120,13 +103,13 @@ function Seekbar({ player, roomRef, isPlaying }) {
   }, [time, updated, isPlaying]);
 
   useEffect(() => {
-    setTime(seekToTime);
+    if (seekToTime) setTime(seekToTime);
   }, [seekToTime]);
 
   function onChange(e) {
-    const val = parseFloat(e.target.value, 10);
-    seekTo(val);
-    setTime(val);
+    const sec = parseFloat(e.target.value, 10);
+    seekTo(sec);
+    setTime(sec);
   }
   return (
     <input
@@ -140,7 +123,7 @@ function Seekbar({ player, roomRef, isPlaying }) {
   );
 }
 
-function PlayTime() {
+function PlayTimeStr() {
   const {
     getCurrentTime,
     val: { isPlaying, seekToTime },
