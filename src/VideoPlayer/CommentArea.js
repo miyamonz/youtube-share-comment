@@ -18,32 +18,42 @@ export default function CommentArea({ context }) {
   }
   function sendComment(text) {
     const time = getCurrentTime();
-    const milliInt = parseInt(time.milliseconds, 10);
-    commentRef.child(milliInt).set({
+    commentRef.push({
       text,
       milli: time.milliseconds,
     });
   }
 
+  function deleteComment(key) {
+    commentRef.child(key).remove();
+  }
+
+  const _comments = Object.entries(comments)
+    .map(([key, values]) => ({
+      key,
+      ...values,
+    }))
+    .sort((a, b) => a.milli < b.milli);
+
   return (
     <div>
-      {Object.values(comments).map((c) => {
+      {_comments.map((c) => {
         const dur = Duration.fromMillis(c.milli);
+        const onClick = () => clickTime(dur.as("seconds"));
         const timeStr = dur.toFormat("mm:ss");
         return (
-          <div key={c.milli}>
+          <div key={c.key}>
             <span>
-              <a
-                onClick={(e) => {
-                  clickTime(dur.as("seconds")), e.preventDefault();
-                }}
-                href="#"
-              >
+              <a onClick={(e) => (onClick(), e.preventDefault())} href="#">
                 {timeStr}
               </a>
             </span>
             {"\t"}
             <span>{c.text}</span>
+            {"\t"}
+            <span>
+              <button onClick={() => deleteComment(c.key)}>x</button>
+            </span>
           </div>
         );
       })}

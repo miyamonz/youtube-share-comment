@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MyInput from "../MyInput";
+import MyInput from "./MyInput";
 
 import getVideoId from "get-video-id";
 

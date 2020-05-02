@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useRoomContext } from "../ContextRoom";
+import { useRoomContext } from "../Room/ContextRoom";
 
 import URLInput from "../URLInput";
 import VideoPlayer from "./VideoPlayer";
-import CommentArea from "../CommentArea";
+import CommentArea from "./CommentArea";
 
 import { Provider, useVideoContext } from "./VideoContext";
 
