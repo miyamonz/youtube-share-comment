@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Provider, useRoomContext } from "./ContextRoom";
 import { useParams } from "react-router-dom";
 
-import VideoPlayer from "./VideoPlayer";
+import VideoPlayer from "./VideoPlayer/index.js";
 import CommentArea from "./CommentArea";
 import ChatArea from "./ChatArea";
 import MyInput from "../MyInput";

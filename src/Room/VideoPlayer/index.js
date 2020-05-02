@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Youtube from "react-youtube";
-import { useRoomContext } from "./ContextRoom";
+import { useRoomContext } from "../ContextRoom";
+
+import useTick from "./useTick";
 
 export default function VideoPlayer({ videoId }) {
   const {
@@ -135,16 +137,6 @@ function Seekbar({ player, roomRef, isPlaying }) {
   );
 }
 
-function useTick(ms = 1000) {
-  const [update, setUpdate] = useState(null);
-  const forceUpdate = () => setUpdate(Date.now());
-  useEffect(() => {
-    let id = setTimeout(forceUpdate, ms);
-    return () => clearTimeout(id);
-  }, [update]);
-  return [update, forceUpdate];
-}
-
 function PlayTime() {
   const {
     getCurrentTime,
@@ -153,7 +145,6 @@ function PlayTime() {
 
   const [updated] = useTick(1000);
   const [time, setTime] = useState(() => getCurrentTime());
-  console.log(time.as("seconds"));
 
   useEffect(() => {
     setTime(getCurrentTime());
