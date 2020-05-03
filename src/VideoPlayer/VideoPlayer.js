@@ -47,8 +47,11 @@ export default function VideoPlayer({ videoId }) {
   function onStateChange(e) {
     const play = 1;
     const stop = 2;
+    
+    /* chattering
     if (e.data == play) setPlay(true);
     if (e.data == stop) setPlay(false);
+    */
   }
   const { togglePlay } = useVideoContext();
   function onClickToggle() {

@@ -12,6 +12,7 @@ export const Provider = ({ dbRef, volume, children }) => {
   const [snapshots, loading, error] = useObject(dbRef);
   if (loading) return <span>"loading video"</span>;
 
+  const { isPlaying } = snapshots.val();
   function getCurrentTime() {
     const { isPlaying = false, startAt, stopAt } = snapshots.val() ?? {
       isPlaying,
@@ -25,7 +26,6 @@ export const Provider = ({ dbRef, volume, children }) => {
   }
 
   function seekTo(seconds) {
-    const { isPlaying } = snapshots.val();
     dbRef.child("seekToTime").set(seconds);
     dbRef
       .child(isPlaying ? "startAt" : "stopAt")
@@ -33,10 +33,10 @@ export const Provider = ({ dbRef, volume, children }) => {
   }
 
   function togglePlay() {
-    const { isPlaying } = snapshots.val();
     setPlay(!isPlaying);
   }
   function setPlay(bool) {
+    console.log("setPlay");
     dbRef.child("isPlaying").set(bool);
 
     const param = {

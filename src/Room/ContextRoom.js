@@ -35,23 +35,10 @@ export const Provider = ({ children, name, mode }) => {
       .set({ currentTime: Date.now(), playTime: seconds });
   }
 
-  function togglePlay() {
-    const { isPlaying } = snapshots.val();
-    ref.child("isPlaying").set(!isPlaying);
-
-    const param = {
-      currentTime: Date.now(),
-      playTime: getCurrentTime().as("seconds"),
-    };
-    if (!isPlaying) ref.child("startAt").set(param);
-    if (isPlaying) ref.child("stopAt").set(param);
-  }
-
   const value = {
     val: snapshots.val(),
     getCurrentTime,
     seekTo,
-    togglePlay,
     snapshots,
     ref,
     roomName: name,
