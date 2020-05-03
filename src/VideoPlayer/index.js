@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRoomContext } from "../contexts";
 
 import VideoPlayer from "./VideoPlayer";
-import CommentsArea from "./CommentsArea";
+import CommentsArea from "../CommentsArea/index";
 
 import { Provider, useVideoContext } from "./VideoContext";
 

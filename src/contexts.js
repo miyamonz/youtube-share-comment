@@ -1,3 +1,3 @@
 export { useRoomContext } from "./Room/ContextRoom";
 export { useVideoContext } from "./VideoPlayer/VideoContext";
-export { useCommentsContext } from "./VideoPlayer/CommentsContext";
+export { useCommentsContext } from "./CommentsArea/CommentsContext";
