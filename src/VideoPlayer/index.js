@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRoomContext } from "../contexts";
 
 import VideoPlayer from "./VideoPlayer";
-import CommentArea from "./CommentArea";
+import CommentsArea from "./CommentsArea";
 
 import { Provider, useVideoContext } from "./VideoContext";
 
@@ -23,7 +23,7 @@ function InVideoContext() {
       {videoType && (
         <>
           <VideoPlayer videoId={videoType.id} />
-          <CommentArea context={useVideoContext} />
+          <CommentsArea context={useVideoContext} />
         </>
       )}
     </>

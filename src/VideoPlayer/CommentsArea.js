@@ -12,7 +12,7 @@ import styled from "styled-components";
 
 import MyInput from "../MyInput";
 
-function CommentArea({ context }) {
+function CommentsArea({ context }) {
   const {
     getCurrentTime,
     seekTo,
@@ -89,7 +89,7 @@ const Scroll = styled.div`
   height: 40vh;
   overflow: auto;
 `;
-function CommentAreaLayout(props) {
+function CommentsAreaLayout(props) {
   const { mode } = useRoomContext();
   const { getCurrentTime, dbRef } = props.context();
   const commentsRef = dbRef.child("comments");
@@ -114,10 +114,10 @@ function CommentAreaLayout(props) {
         <CommentInput onEnter={sendComment} onClickPin={createCommentAndEdit} />
       )}
       <Scroll>
-        <CommentArea {...props} />
+        <CommentsArea {...props} />
       </Scroll>
     </Provider>
   );
 }
 
-export default CommentAreaLayout;
+export default CommentsAreaLayout;
