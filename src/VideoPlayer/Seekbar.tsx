@@ -3,9 +3,7 @@ import { useRoomContext, useVideoContext } from "../contexts";
 
 import styled from "styled-components";
 
-const Slider = styled.input.attrs({
-  type: "range",
-})`
+const Slider = styled.input`
   width: 100%;
 `;
 
@@ -43,6 +41,7 @@ function Seekbar({ duration, isPlaying }) {
   }
   return (
     <Slider
+      type="range"
       min="0"
       max={duration}
       step={0.1}
