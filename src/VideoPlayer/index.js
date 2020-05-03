@@ -23,7 +23,7 @@ function InVideoContext() {
       {videoType && (
         <>
           <VideoPlayer videoId={videoType.id} />
-          <CommentsArea context={useVideoContext} />
+          <CommentsArea />
         </>
       )}
     </>

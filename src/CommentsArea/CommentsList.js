@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Duration } from "luxon";
 
-import { useRoomContext } from "../contexts";
+import { useRoomContext, useVideoContext } from "../contexts";
 import { useCommentsContext } from "./CommentsContext";
 
 import CommentEditableText from "./CommentEditableText";
 
-function CommentsList({ context }) {
+function CommentsList() {
   const {
     getCurrentTime,
     seekTo,
     val: { comments = [] },
     dbRef,
-  } = context();
+  } = useVideoContext();
   const { dbRef: commentsRef } = useCommentsContext();
 
   const _comments = Object.entries(comments).map(([key, values]) => ({
