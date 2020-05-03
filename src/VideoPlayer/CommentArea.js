@@ -77,10 +77,10 @@ function CommentAreaLayout(props) {
   }
   return (
     <div>
+      <MyInput onEnter={sendComment} placeholder="write comment" />
       <Scroll>
         <CommentArea {...props} />
       </Scroll>
-      <MyInput onEnter={sendComment} placeholder="write comment" />
     </div>
   );
 }

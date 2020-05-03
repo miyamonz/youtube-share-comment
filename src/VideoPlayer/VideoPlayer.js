@@ -78,7 +78,6 @@ export default function VideoPlayer({ videoId }) {
           </div>
         </div>
       )}
-      <hr />
     </>
   );
 }
