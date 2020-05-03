@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useVideoContext } from "./VideoContext";
 
+import styled from "styled-components";
+
+const Slider = styled.input.attrs({
+  type: "range",
+})`
+  width: 100%;
+`;
+
 function Seekbar({ duration, isPlaying }) {
   const {
     seekTo,
@@ -31,11 +39,10 @@ function Seekbar({ duration, isPlaying }) {
     setTime(sec);
   }
   return (
-    <input
-      type="range"
+    <Slider
+      min="0"
       max={duration}
       step={0.1}
-      style={{ width: "100%" }}
       value={time}
       onChange={onChange}
     />
