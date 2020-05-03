@@ -6,9 +6,9 @@ import CommentArea from "./CommentArea";
 
 import { Provider, useVideoContext } from "./VideoContext";
 
-export default function Container({ video }) {
+export default function Container({ video, volume }) {
   return (
-    <Provider dbRef={video.ref}>
+    <Provider dbRef={video.ref} volume={volume}>
       <InVideoContext />
     </Provider>
   );

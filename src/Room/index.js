@@ -8,6 +8,7 @@ import VideoPlayer from "../VideoPlayer/index.js";
 import VideoList from "../VideoList";
 import URLInput from "../URLInput";
 
+import VolumeSlider from "../VolumeSlider";
 export default function Room() {
   const { name } = useParams();
   return (
@@ -29,6 +30,12 @@ const URLInputStyled = styled(URLInput)`
   margin-top: 1rem;
 `;
 
+const TopRight = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+`;
 function RoomLayout() {
   const {
     val: { currentVideoKey },
@@ -42,13 +49,27 @@ function RoomLayout() {
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
     setVideo(videoSnapshot);
   }
+
+  // volume
+  const state = useState(() => 5);
   return (
-    <div className="columns">
-      <div className="column is-3">
-        <VideoList {...{ videosRef, currentVideoKey }} onSelect={selectVideo} />
-        <URLInputStyled defaultVal={""} onEnter={sendVideoData} />
+    <>
+      <TopRight>
+        volume
+        <VolumeSlider {...{ state }} />
+      </TopRight>
+      <div className="columns">
+        <div className="column is-3">
+          <VideoList
+            {...{ videosRef, currentVideoKey }}
+            onSelect={selectVideo}
+          />
+          <URLInputStyled defaultVal={""} onEnter={sendVideoData} />
+        </div>
+        <div className="column">
+          {video && <VideoPlayer video={video} volume={state[0]} />}
+        </div>
       </div>
-      <div className="column">{video && <VideoPlayer video={video} />}</div>
-    </div>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Youtube from "react-youtube";
 import { useVideoContext } from "./VideoContext";
-import { useSeekEffect, usePlayEffect } from "./effects";
+import { useSeekEffect, usePlayEffect, useVolumeEffect } from "./effects";
 import useTick from "./useTick";
 import Seekbar from "./Seekbar";
 import ToggleButton from "./ToggleButton";
@@ -30,6 +30,7 @@ export default function VideoPlayer({ videoId }) {
   useSeekEffect(player);
   // control player by db state
   usePlayEffect(player);
+  useVolumeEffect(player);
 
   const onReady = (event) => {
     setPlayer(event.target);
@@ -46,16 +47,9 @@ export default function VideoPlayer({ videoId }) {
     if (e.data == stop) setPlay(false);
   }
   const { togglePlay } = useVideoContext();
-  const state = useState(() => 5);
 
   return (
     <>
-      {player && (
-        <div style={{ float: "right" }}>
-          volume
-          <SoundVolumeInput {...{ state, player }} />
-        </div>
-      )}
       <Youtube
         videoId={videoId}
         opts={opts}
@@ -96,21 +90,4 @@ function PlayTimeStr() {
   }, [isPlaying, seekToTime, updated]);
 
   return <span>{time.toFormat("mm:ss")}</span>;
-}
-
-function SoundVolumeInput({ state, player }) {
-  const [volume, setVolume] = state;
-  function onChange(e) {
-    const v = e.target.value;
-    setVolume(v);
-    player.setVolume(v);
-  }
-
-  useEffect(() => {
-    player.setVolume(volume);
-  }, [volume]);
-
-  return (
-    <input type="range" min="0" max="100" value={volume} onChange={onChange} />
-  );
 }

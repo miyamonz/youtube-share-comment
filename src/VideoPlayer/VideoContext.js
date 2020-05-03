@@ -8,7 +8,7 @@ export function useVideoContext() {
   return useContext(Context);
 }
 
-export const Provider = ({ dbRef, children }) => {
+export const Provider = ({ dbRef, volume, children }) => {
   const [snapshots, loading, error] = useObject(dbRef);
   if (loading) return <span>"loading video"</span>;
 
@@ -55,6 +55,7 @@ export const Provider = ({ dbRef, children }) => {
     setPlay,
     snapshots,
     dbRef,
+    volume,
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 };

@@ -26,3 +26,13 @@ export function usePlayEffect(player) {
     }
   }, [isPlaying, player]);
 }
+
+export function useVolumeEffect(player) {
+  const { volume } = useVideoContext();
+
+  useEffect(() => {
+    if (player) {
+      player.setVolume(volume);
+    }
+  }, [player, volume]);
+}
