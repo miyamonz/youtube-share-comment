@@ -10,9 +10,6 @@ export function useCommentsContext() {
 export const Provider = ({ dbRef, children }) => {
   const [snapshots, loading, error] = useObject(dbRef);
   if (loading) return <span>"loading comments"</span>;
-
-  const { isPlaying } = snapshots.val();
-
   const value = {
     snapshots,
     dbRef,
