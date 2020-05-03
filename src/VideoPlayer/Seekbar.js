@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useVideoContext } from "./VideoContext";
-import { useRoomContext } from "../Room/ContextRoom";
+import { useRoomContext, useVideoContext } from "../contexts";
 
 import styled from "styled-components";
 

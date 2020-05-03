@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useRoomContext } from "./Room/ContextRoom";
+import { useRoomContext } from "./contexts";
 
 import { useList } from "react-firebase-hooks/database";
 

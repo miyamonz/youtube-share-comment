@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Duration } from "luxon";
 
-import { useRoomContext } from "../Room/ContextRoom";
+import { useRoomContext } from "../contexts";
 import { Provider, useCommentsContext } from "./CommentsContext";
 
 import CommentEditableText from "./CommentEditableText.js";

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Youtube from "react-youtube";
 
-import { useVideoContext } from "./VideoContext";
-import { useRoomContext } from "../Room/ContextRoom";
+import { useRoomContext, useVideoContext } from "../contexts";
 
 import { useSeekEffect, usePlayEffect, useVolumeEffect } from "./effects";
 import useTick from "./useTick";
