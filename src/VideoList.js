@@ -18,7 +18,7 @@ function VideoList({ videosRef, currentVideoKey, onSelect }) {
         className={isActive ? "is-active" : ""}
         {...props}
       >
-        {snapshot.toJSON().videoType.id}
+        {snapshot.toJSON().videoType?.id}
       </a>
     );
   };

@@ -16,6 +16,14 @@ export default function Room() {
   );
 }
 
+const sendVideDataToRoom = (roomRef) => (data) => {
+  if(! data?.id) return
+  const dbRef = roomRef.child("videos").push();
+  dbRef.child("videoType").set(data);
+  dbRef.child("isPlaying").set(false);
+  dbRef.child("seekToTime").set(0);
+};
+
 // ここにvideolistひっぱりだすべきかも
 function RoomLayout() {
   const {
@@ -25,12 +33,7 @@ function RoomLayout() {
   const videosRef = roomRef.child("videos").orderByKey().ref;
   const [video, setVideo] = useState();
 
-  function sendVideoData(data) {
-    const dbRef = roomRef.child("videos").push();
-    dbRef.child("videoType").set(data);
-    dbRef.child("isPlaying").set(false);
-    dbRef.child("seekToTime").set(0);
-  }
+  const sendVideoData = sendVideDataToRoom(roomRef);
   function selectVideo(videoSnapshot) {
     roomRef.child("currentVideoKey").set(videoSnapshot.key);
     setVideo(videoSnapshot);

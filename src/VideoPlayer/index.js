@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRoomContext } from "../Room/ContextRoom";
 
-
 import VideoPlayer from "./VideoPlayer";
 import CommentArea from "./CommentArea";
 
@@ -21,8 +20,6 @@ function InVideoContext() {
   const url = videoType ? `https://youtube.com/?v=${videoType.id}` : "";
   return (
     <>
-      {!videoType && "enter youtube URL"}
-
       {videoType && (
         <>
           <VideoPlayer videoId={videoType.id} />
