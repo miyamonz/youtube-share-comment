@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
+const Input = styled.input.attrs({ className: `input is-info` })``;
 export default function MyInput({ defaultVal = "", onEnter, ...props }) {
   const [value, setValue] = useState(defaultVal);
 
@@ -21,7 +23,7 @@ export default function MyInput({ defaultVal = "", onEnter, ...props }) {
   }, [downKeyCode, upKeyCode]);
   return (
     <>
-      <input
+      <Input
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={onKeyDown}

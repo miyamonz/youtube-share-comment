@@ -3,7 +3,7 @@ import MyInput from "./MyInput";
 
 import getVideoId from "get-video-id";
 
-export default function URLInput({ defaultVal, onEnter }) {
+export default function URLInput({ defaultVal, onEnter, ...props }) {
   function _onEnter(text) {
     const videoType = getVideoId(text);
     onEnter(videoType);
@@ -13,6 +13,7 @@ export default function URLInput({ defaultVal, onEnter }) {
       defaultVal={defaultVal}
       onEnter={_onEnter}
       placeholder="enter youtube URL"
+      {...props}
     />
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 
 import { Provider, useRoomContext } from "./ContextRoom";
 import { useParams } from "react-router-dom";
@@ -24,7 +25,10 @@ const sendVideDataToRoom = (roomRef) => (data) => {
   dbRef.child("seekToTime").set(0);
 };
 
-// ここにvideolistひっぱりだすべきかも
+const URLInputStyled = styled(URLInput)`
+  margin-top: 1rem;
+`;
+
 function RoomLayout() {
   const {
     val: { currentVideoKey },
@@ -39,21 +43,12 @@ function RoomLayout() {
     setVideo(videoSnapshot);
   }
   return (
-    <div className="tile is-ancestor">
-      <div className="tile is-3">
-        <div className="tile is-child">
-          <VideoList
-            {...{ videosRef, currentVideoKey }}
-            onSelect={selectVideo}
-          />
-          <URLInput defaultVal={""} onEnter={sendVideoData} />
-        </div>
+    <div className="columns">
+      <div className="column is-3">
+        <VideoList {...{ videosRef, currentVideoKey }} onSelect={selectVideo} />
+        <URLInputStyled defaultVal={""} onEnter={sendVideoData} />
       </div>
-      <div className="tile">
-        <div className="tile is-child">
-          {video && <VideoPlayer video={video} />}
-        </div>
-      </div>
+      <div className="column">{video && <VideoPlayer video={video} />}</div>
     </div>
   );
 }
