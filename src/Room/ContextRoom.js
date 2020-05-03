@@ -11,7 +11,7 @@ export function useRoomContext() {
   return useContext(Context);
 }
 
-export const Provider = ({ children, name }) => {
+export const Provider = ({ children, name, mode }) => {
   const ref = db.ref(`rooms/${name}`);
   const [snapshots, loading, error] = useObject(ref);
 
@@ -54,6 +54,8 @@ export const Provider = ({ children, name }) => {
     togglePlay,
     snapshots,
     ref,
+    roomName: name,
+    mode,
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 };

@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Youtube from "react-youtube";
+
 import { useVideoContext } from "./VideoContext";
+import { useRoomContext } from "../Room/ContextRoom";
+
 import { useSeekEffect, usePlayEffect, useVolumeEffect } from "./effects";
 import useTick from "./useTick";
 import Seekbar from "./Seekbar";
@@ -20,6 +23,7 @@ const opts = {
 };
 
 export default function VideoPlayer({ videoId }) {
+  const { mode } = useRoomContext();
   const {
     getCurrentTime,
     val: { isPlaying },
@@ -47,6 +51,10 @@ export default function VideoPlayer({ videoId }) {
     if (e.data == stop) setPlay(false);
   }
   const { togglePlay } = useVideoContext();
+  function onClickToggle() {
+    if (mode === "view") return;
+    togglePlay();
+  }
 
   return (
     <>
@@ -61,8 +69,8 @@ export default function VideoPlayer({ videoId }) {
         <div style={{ display: "flex" }}>
           <ToggleButton
             isPlaying={isPlaying}
-            disabled={!player}
-            onClick={togglePlay}
+            disabled={mode === "view" ? true : !player}
+            onClick={onClickToggle}
           />
           <div style={{ flex: 1 }}>
             <Seekbar isPlaying={isPlaying} duration={player.getDuration()} />

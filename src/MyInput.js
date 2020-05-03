@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const Input = styled.input.attrs({ className: `input is-info` })``;
-export default function MyInput({ defaultVal = "", onEnter, ...props }) {
+export default function MyInput({
+  defaultVal = "",
+  onEnter,
+  onKeyDown,
+  ...props
+}) {
   const [value, setValue] = useState(defaultVal);
 
   function onClick() {
@@ -10,8 +15,9 @@ export default function MyInput({ defaultVal = "", onEnter, ...props }) {
     setValue("");
   }
   const [downKeyCode, setDownKeyCode] = useState();
-  function onKeyDown(e) {
+  function _onKeyDown(e) {
     setDownKeyCode(e.keyCode);
+    onKeyDown(e);
   }
   const [upKeyCode, setUpKeyCode] = useState();
   function onKeyUp(e) {
@@ -24,9 +30,10 @@ export default function MyInput({ defaultVal = "", onEnter, ...props }) {
   return (
     <>
       <Input
+        ref={props.innerRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        onKeyDown={onKeyDown}
+        onKeyDown={_onKeyDown}
         onKeyUp={onKeyUp}
         {...props}
       />

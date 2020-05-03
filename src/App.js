@@ -38,8 +38,11 @@ function AppRouter() {
       <Section>
         <Switch>
           <Route path="/" exact children={<Home />} />
-          <Route path="/rooms/:name">
+          <Route path="/rooms/:name" exact>
             <Room />
+          </Route>
+          <Route path="/rooms/:name/view" exact>
+            <Room mode='view' />
           </Route>
         </Switch>
       </Section>

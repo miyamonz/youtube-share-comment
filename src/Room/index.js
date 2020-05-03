@@ -9,10 +9,10 @@ import VideoList from "../VideoList";
 import URLInput from "../URLInput";
 
 import VolumeSlider from "../VolumeSlider";
-export default function Room() {
+export default function Room({ mode }) {
   const { name } = useParams();
   return (
-    <Provider name={name}>
+    <Provider name={name} mode={mode}>
       <RoomLayout />
     </Provider>
   );
@@ -40,6 +40,7 @@ function RoomLayout() {
   const {
     val: { currentVideoKey },
     ref: roomRef,
+    mode,
   } = useRoomContext();
   const videosRef = roomRef.child("videos").orderByKey().ref;
   const [video, setVideo] = useState();
@@ -58,13 +59,20 @@ function RoomLayout() {
         volume
         <VolumeSlider {...{ state }} />
       </TopRight>
+      {mode === "view" && (
+        <div>
+          <h2 className="title">view mode</h2>
+        </div>
+      )}
       <div className="columns">
         <div className="column is-3">
           <VideoList
             {...{ videosRef, currentVideoKey }}
             onSelect={selectVideo}
           />
-          <URLInputStyled defaultVal={""} onEnter={sendVideoData} />
+          {mode === "view" || (
+            <URLInputStyled defaultVal={""} onEnter={sendVideoData} />
+          )}
         </div>
         <div className="column">
           {video && <VideoPlayer video={video} volume={state[0]} />}

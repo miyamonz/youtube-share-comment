@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRoomContext } from "./Room/ContextRoom";
 
 import { useList } from "react-firebase-hooks/database";
 
@@ -41,12 +42,13 @@ const A = styled.a`
   width: 80%;
 `;
 function VideoListItem({ snapshot, isActive, onSelect, onDelete }) {
+  const { mode } = useRoomContext();
   const videoId = snapshot.toJSON().videoType?.id;
   return (
     <>
       <A
         onClick={(e) => {
-          onSelect(snapshot);
+          if (mode !== "view") onSelect(snapshot);
           e.preventDefault();
         }}
         href="#"
@@ -54,12 +56,15 @@ function VideoListItem({ snapshot, isActive, onSelect, onDelete }) {
       >
         {videoId}
       </A>
-      <button
-        className="button is-small is-pulled-right"
-        onClick={() => onDelete(snapshot.key)}
-      >
-        x
-      </button>
+
+      {mode === "view" || (
+        <button
+          className="button is-small is-pulled-right"
+          onClick={() => onDelete(snapshot.key)}
+        >
+          x
+        </button>
+      )}
     </>
   );
 }

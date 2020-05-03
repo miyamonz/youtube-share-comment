@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useRef } from "react";
 import { Duration } from "luxon";
+
+import { useRoomContext } from "../Room/ContextRoom";
 
 import { faMapPin } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -55,9 +58,13 @@ function CommentArea({ context }) {
 }
 
 function CommentListItem({ comment, onClickTime, commentRef }) {
+  const { mode } = useRoomContext();
   const dur = Duration.fromMillis(comment.milli);
   const timeStr = dur.toFormat("mm:ss");
-  const onClick = () => onClickTime(dur.as("seconds"));
+  const onClick = () => {
+    if (mode === "view") return;
+    onClickTime(dur.as("seconds"));
+  };
   return (
     <>
       <span>
@@ -69,20 +76,26 @@ function CommentListItem({ comment, onClickTime, commentRef }) {
       <CommentText
         text={comment.text}
         onEnter={(text) => commentRef.update({ text })}
+        onClickRemove={() => commentRef.rempve()}
       />
-      {"\t"}
-      <span>
-        <button onClick={() => commentRef.remove()}>x</button>
-      </span>
     </>
   );
 }
 
-const NotMaxWidthInput = styled(MyInput)`
+const NotMaxWidthInput = styled(
+  React.forwardRef((props, ref) => <MyInput {...props} innerRef={ref} />)
+)`
   width: auto;
 `;
-function CommentText({ text, onEnter }) {
+function CommentText({ text, onEnter, onClickRemove }) {
+  const { mode } = useRoomContext();
   const [editing, setEditing] = useState(false);
+
+  const ref = useRef();
+  useEffect(() => {
+    if (editing) ref.current.focus();
+  }, [editing]);
+
   const _onEnter = (text) => {
     setEditing(false);
     onEnter(text);
@@ -90,9 +103,29 @@ function CommentText({ text, onEnter }) {
   return (
     <>
       {editing ? (
-        <NotMaxWidthInput defaultVal={text} onEnter={_onEnter} />
+        <>
+          <NotMaxWidthInput
+            ref={ref}
+            defaultVal={text}
+            onEnter={_onEnter}
+            onKeyDown={(e) => {
+              if (e.key == "Escape") setEditing(false);
+            }}
+            onBlur={() => setEditing(false)}
+          />
+          <span>
+            <button onClick={onClickRemove}>x</button>
+          </span>
+        </>
       ) : (
-        <span onClick={() => setEditing(true)}>{text}</span>
+        <span
+          onClick={() => {
+            if (mode === "view") return;
+            setEditing(true);
+          }}
+        >
+          {text}
+        </span>
       )}
     </>
   );
@@ -103,6 +136,7 @@ const Scroll = styled.div`
   overflow: auto;
 `;
 function CommentAreaLayout(props) {
+  const { mode } = useRoomContext();
   const { getCurrentTime, dbRef } = props.context();
   const commentsRef = dbRef.child("comments");
 
@@ -115,7 +149,7 @@ function CommentAreaLayout(props) {
   }
   return (
     <div>
-      <CommentInput onEnter={sendComment} />
+      {mode === "view" || <CommentInput onEnter={sendComment} />}
       <Scroll>
         <CommentArea {...props} />
       </Scroll>
@@ -127,7 +161,7 @@ const FieldHasAddons = styled.div.attrs({ className: `field has-addons` })``;
 const Control = styled.div.attrs({ className: `control` })``;
 
 function CommentInput({ onEnter }) {
-  /*
+  return (
     <FieldHasAddons>
       <button className="button is-info">
         <FontAwesomeIcon icon={faMapPin} />
@@ -136,8 +170,7 @@ function CommentInput({ onEnter }) {
         <MyInput onEnter={onEnter} placeholder="write comment" />
       </Control>
     </FieldHasAddons>
-        */
-  return <MyInput onEnter={onEnter} placeholder="write comment" />;
+  );
 }
 
 export default CommentAreaLayout;

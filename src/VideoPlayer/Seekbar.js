@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useVideoContext } from "./VideoContext";
+import { useRoomContext } from "../Room/ContextRoom";
 
 import styled from "styled-components";
 
@@ -10,6 +11,8 @@ const Slider = styled.input.attrs({
 `;
 
 function Seekbar({ duration, isPlaying }) {
+  const { mode } = useRoomContext();
+
   const {
     seekTo,
     getCurrentTime,
@@ -34,6 +37,7 @@ function Seekbar({ duration, isPlaying }) {
   }, [seekToTime]);
 
   function onChange(e) {
+    if (mode === "view") return;
     const sec = parseFloat(e.target.value, 10);
     seekTo(sec);
     setTime(sec);
