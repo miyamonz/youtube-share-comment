@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Duration } from "luxon";
+
+import { faMapPin } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import styled from "styled-components";
 
 import MyInput from "../MyInput";
@@ -77,11 +81,27 @@ function CommentAreaLayout(props) {
   }
   return (
     <div>
-      <MyInput onEnter={sendComment} placeholder="write comment" />
+      <CommentInput onEnter={sendComment} />
       <Scroll>
         <CommentArea {...props} />
       </Scroll>
     </div>
+  );
+}
+
+const FieldHasAddons = styled.div.attrs({ className: `field has-addons` })``;
+const Control = styled.div.attrs({ className: `control` })``;
+
+function CommentInput({ onEnter }) {
+  return (
+    <FieldHasAddons>
+      <button className="button is-info">
+        <FontAwesomeIcon icon={faMapPin} />
+      </button>
+      <Control>
+        <MyInput onEnter={onEnter} placeholder="write comment" />
+      </Control>
+    </FieldHasAddons>
   );
 }
 
