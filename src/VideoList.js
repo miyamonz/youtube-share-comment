@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import { useList } from "react-firebase-hooks/database";
 
-import { getVideoTitle } from "./YoutubeAPI.js";
 import styled from "styled-components";
 
 function VideoList({ videosRef, currentVideoKey, onSelect }) {
@@ -12,13 +11,6 @@ function VideoList({ videosRef, currentVideoKey, onSelect }) {
     const isActive = snapshot.key === currentVideoKey;
 
     const videoId = snapshot.toJSON().videoType?.id;
-
-    const [title, setTitle] = useState(videoId);
-    useEffect(() => {
-      if (videoId) {
-        getVideoTitle(videoId).then(setTitle);
-      }
-    }, [videoId]);
     return (
       <a
         onClick={(e) => {
@@ -29,7 +21,7 @@ function VideoList({ videosRef, currentVideoKey, onSelect }) {
         className={isActive ? "is-active" : ""}
         {...props}
       >
-        {title}
+        {videoId}
       </a>
     );
   };
