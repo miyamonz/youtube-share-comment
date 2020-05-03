@@ -17,7 +17,7 @@ export default function Room() {
 }
 
 const sendVideDataToRoom = (roomRef) => (data) => {
-  if(! data?.id) return
+  if (!data?.id) return;
   const dbRef = roomRef.child("videos").push();
   dbRef.child("videoType").set(data);
   dbRef.child("isPlaying").set(false);
@@ -41,7 +41,7 @@ function RoomLayout() {
   return (
     <div className="tile is-ancestor">
       <div className="tile is-3">
-        <div>
+        <div className="tile is-child">
           <VideoList
             {...{ videosRef, currentVideoKey }}
             onSelect={selectVideo}

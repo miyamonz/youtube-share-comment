@@ -27,18 +27,22 @@ export default function App() {
   );
 }
 
+const Section = styled.div.attrs({ className: `section` })`
+  padding: 1.5rem;
+`;
+
 function AppRouter() {
   return (
     <Router>
       <Header />
-      <div className="section">
+      <Section>
         <Switch>
           <Route path="/" exact children={<Home />} />
           <Route path="/rooms/:name">
             <Room />
           </Route>
         </Switch>
-      </div>
+      </Section>
     </Router>
   );
 }
