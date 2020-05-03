@@ -7,43 +7,60 @@ import styled from "styled-components";
 function VideoList({ videosRef, currentVideoKey, onSelect }) {
   const [snapshots] = useList(videosRef);
 
-  const VideoLink = ({ snapshot, ...props }) => {
-    const isActive = snapshot.key === currentVideoKey;
+  useEffect(() => {
+    if (currentVideoKey) {
+      onSelect(videosRef.child(currentVideoKey));
+    }
+  }, [currentVideoKey]);
 
-    const videoId = snapshot.toJSON().videoType?.id;
-    return (
-      <a
+  const onDelete = (key) => videosRef.child(key).remove();
+  return (
+    <aside className="menu">
+      <p className="menu-label">videos</p>
+      <ul className="menu-list">
+        {snapshots.map((s) => {
+          const isActive = s.key === currentVideoKey;
+          return (
+            <li key={s.key}>
+              <VideoListItem
+                snapshot={s}
+                isActive={isActive}
+                onSelect={onSelect}
+                onDelete={onDelete}
+              />
+            </li>
+          );
+        })}
+      </ul>
+    </aside>
+  );
+}
+
+const A = styled.a`
+  display: inline-block !important;
+  width: 80%;
+`;
+function VideoListItem({ snapshot, isActive, onSelect, onDelete }) {
+  const videoId = snapshot.toJSON().videoType?.id;
+  return (
+    <>
+      <A
         onClick={(e) => {
           onSelect(snapshot);
           e.preventDefault();
         }}
         href="#"
         className={isActive ? "is-active" : ""}
-        {...props}
       >
         {videoId}
-      </a>
-    );
-  };
-
-  useEffect(() => {
-    if (currentVideoKey) {
-      onSelect(videosRef.child(currentVideoKey));
-    }
-  }, [currentVideoKey]);
-  return (
-    <aside className="menu">
-      <p className="menu-label">videos</p>
-      <ul className="menu-list">
-        {snapshots.map((s) => {
-          return (
-            <li key={s.key}>
-              <VideoLink snapshot={s} />
-            </li>
-          );
-        })}
-      </ul>
-    </aside>
+      </A>
+      <button
+        className="button is-small is-pulled-right"
+        onClick={() => onDelete(snapshot.key)}
+      >
+        x
+      </button>
+    </>
   );
 }
 
