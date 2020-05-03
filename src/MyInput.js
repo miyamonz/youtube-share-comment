@@ -17,7 +17,7 @@ export default function MyInput({
   const [downKeyCode, setDownKeyCode] = useState();
   function _onKeyDown(e) {
     setDownKeyCode(e.keyCode);
-    onKeyDown(e);
+    if (onKeyDown) onKeyDown(e);
   }
   const [upKeyCode, setUpKeyCode] = useState();
   function onKeyUp(e) {

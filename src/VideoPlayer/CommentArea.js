@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useRef } from "react";
 import { Duration } from "luxon";
 
 import { useRoomContext } from "../Room/ContextRoom";
+import { Provider, useCommentsContext } from "./CommentsContext";
 
+import CommentEditableText from "./CommentEditableText.js";
 import { faMapPin } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -18,20 +19,7 @@ function CommentArea({ context }) {
     val: { comments = [] },
     dbRef,
   } = context();
-
-  const commentsRef = dbRef.child("comments");
-
-  function sendComment(text) {
-    const time = getCurrentTime();
-    commentsRef.push({
-      text,
-      milli: time.milliseconds,
-    });
-  }
-
-  function deleteComment(key) {
-    commentsRef.child(key).remove();
-  }
+  const { dbRef: commentsRef } = useCommentsContext();
 
   const _comments = Object.entries(comments).map(([key, values]) => ({
     key,
@@ -41,9 +29,9 @@ function CommentArea({ context }) {
 
   return (
     <div>
-      {_comments.reduce((prev, comment) => {
+      {_comments.map((comment) => {
         const commentRef = commentsRef.child(comment.key);
-        const _ = (
+        return (
           <div key={comment.key}>
             <CommentListItem
               {...{ comment, commentRef }}
@@ -51,8 +39,7 @@ function CommentArea({ context }) {
             />
           </div>
         );
-        return [...prev, _];
-      }, [])}
+      })}
     </div>
   );
 }
@@ -73,7 +60,7 @@ function CommentListItem({ comment, onClickTime, commentRef }) {
         </a>
       </span>
       {"\t"}
-      <CommentText
+      <CommentEditableText
         text={comment.text}
         onEnter={(text) => commentRef.update({ text })}
         onClickRemove={() => commentRef.rempve()}
@@ -82,52 +69,19 @@ function CommentListItem({ comment, onClickTime, commentRef }) {
   );
 }
 
-const NotMaxWidthInput = styled(
-  React.forwardRef((props, ref) => <MyInput {...props} innerRef={ref} />)
-)`
-  width: auto;
-`;
-function CommentText({ text, onEnter, onClickRemove }) {
-  const { mode } = useRoomContext();
-  const [editing, setEditing] = useState(false);
+const FieldHasAddons = styled.div.attrs({ className: `field has-addons` })``;
+const Control = styled.div.attrs({ className: `control` })``;
 
-  const ref = useRef();
-  useEffect(() => {
-    if (editing) ref.current.focus();
-  }, [editing]);
-
-  const _onEnter = (text) => {
-    setEditing(false);
-    onEnter(text);
-  };
+function CommentInput({ onEnter, onClickPin }) {
   return (
-    <>
-      {editing ? (
-        <>
-          <NotMaxWidthInput
-            ref={ref}
-            defaultVal={text}
-            onEnter={_onEnter}
-            onKeyDown={(e) => {
-              if (e.key == "Escape") setEditing(false);
-            }}
-            onBlur={() => setEditing(false)}
-          />
-          <span>
-            <button onClick={onClickRemove}>x</button>
-          </span>
-        </>
-      ) : (
-        <span
-          onClick={() => {
-            if (mode === "view") return;
-            setEditing(true);
-          }}
-        >
-          {text}
-        </span>
-      )}
-    </>
+    <FieldHasAddons>
+      <button className="button is-info" onClick={onClickPin}>
+        <FontAwesomeIcon icon={faMapPin} />
+      </button>
+      <Control>
+        <MyInput onEnter={onEnter} placeholder="write comment" />
+      </Control>
+    </FieldHasAddons>
   );
 }
 
@@ -147,29 +101,22 @@ function CommentAreaLayout(props) {
       milli: time.milliseconds,
     });
   }
+  function createCommentAndEdit() {
+    const time = getCurrentTime();
+    commentsRef.push({
+      text: "",
+      milli: time.milliseconds,
+    });
+  }
   return (
-    <div>
-      {mode === "view" || <CommentInput onEnter={sendComment} />}
+    <Provider dbRef={commentsRef}>
+      {mode !== "view" && (
+        <CommentInput onEnter={sendComment} onClickPin={createCommentAndEdit} />
+      )}
       <Scroll>
         <CommentArea {...props} />
       </Scroll>
-    </div>
-  );
-}
-
-const FieldHasAddons = styled.div.attrs({ className: `field has-addons` })``;
-const Control = styled.div.attrs({ className: `control` })``;
-
-function CommentInput({ onEnter }) {
-  return (
-    <FieldHasAddons>
-      <button className="button is-info">
-        <FontAwesomeIcon icon={faMapPin} />
-      </button>
-      <Control>
-        <MyInput onEnter={onEnter} placeholder="write comment" />
-      </Control>
-    </FieldHasAddons>
+    </Provider>
   );
 }
 
