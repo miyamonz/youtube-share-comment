@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useObject } from "react-firebase-hooks/database";
 
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 
-import Room from "./Room/index.js";
+import Room from "./Room/index";
 import Header from "./Header";
 import CreateRoomInput from "./CreateRoomInput";
 
 import { db } from "./firebase";
 
 export default function App() {
-  const [snapshots, loading, error] = useObject(db.ref());
+  const [loading, error] = useObject(db.ref());
   return (
     <>
       <div>
@@ -42,7 +42,7 @@ function AppRouter() {
             <Room />
           </Route>
           <Route path="/rooms/:name/view" exact>
-            <Room mode='view' />
+            <Room mode="view" />
           </Route>
         </Switch>
       </Section>

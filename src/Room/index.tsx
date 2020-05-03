@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { Provider, useRoomContext } from "./ContextRoom";
 import { useParams } from "react-router-dom";
 
-import VideoPlayer from "../VideoPlayer/index.js";
+import VideoPlayer from "../VideoPlayer/index";
 import VideoList from "../VideoList";
 import URLInput from "../URLInput";
 
