@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import Youtube from "react-youtube";
 
 import { useRoomContext, useVideoContext } from "../contexts";
@@ -46,7 +45,7 @@ export default function VideoPlayer({ videoId }) {
   function onStateChange(e) {
     const play = 1;
     const stop = 2;
-    
+
     /* chattering
     if (e.data == play) setPlay(true);
     if (e.data == stop) setPlay(false);
