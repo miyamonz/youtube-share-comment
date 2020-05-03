@@ -16,18 +16,18 @@ function CommentArea({ context }) {
     dbRef,
   } = context();
 
-  const commentRef = dbRef.child("comments");
+  const commentsRef = dbRef.child("comments");
 
   function sendComment(text) {
     const time = getCurrentTime();
-    commentRef.push({
+    commentsRef.push({
       text,
       milli: time.milliseconds,
     });
   }
 
   function deleteComment(key) {
-    commentRef.child(key).remove();
+    commentsRef.child(key).remove();
   }
 
   const _comments = Object.entries(comments).map(([key, values]) => ({
@@ -38,29 +38,63 @@ function CommentArea({ context }) {
 
   return (
     <div>
-      {_comments.reduce((prev, c) => {
-        const dur = Duration.fromMillis(c.milli);
-        const onClick = () => seekTo(dur.as("seconds"));
-        const timeStr = dur.toFormat("mm:ss");
-        const diff = (c.milli - (prev[prev.length - 1]?.milli ?? 0)) / 1000;
+      {_comments.reduce((prev, comment) => {
+        const commentRef = commentsRef.child(comment.key);
         const _ = (
-          <div key={c.key} style={{ marginTop: diff / 5 }}>
-            <span>
-              <a onClick={(e) => (onClick(), e.preventDefault())} href="#">
-                {timeStr}
-              </a>
-            </span>
-            {"\t"}
-            <span>{c.text}</span>
-            {"\t"}
-            <span>
-              <button onClick={() => deleteComment(c.key)}>x</button>
-            </span>
+          <div key={comment.key}>
+            <CommentListItem
+              {...{ comment, commentRef }}
+              onClickTime={seekTo}
+            />
           </div>
         );
         return [...prev, _];
       }, [])}
     </div>
+  );
+}
+
+function CommentListItem({ comment, onClickTime, commentRef }) {
+  const dur = Duration.fromMillis(comment.milli);
+  const timeStr = dur.toFormat("mm:ss");
+  const onClick = () => onClickTime(dur.as("seconds"));
+  return (
+    <>
+      <span>
+        <a onClick={(e) => (onClick(), e.preventDefault())} href="#">
+          {timeStr}
+        </a>
+      </span>
+      {"\t"}
+      <CommentText
+        text={comment.text}
+        onEnter={(text) => commentRef.update({ text })}
+      />
+      {"\t"}
+      <span>
+        <button onClick={() => commentRef.remove()}>x</button>
+      </span>
+    </>
+  );
+}
+
+const NotMaxWidthInput = styled(MyInput)`
+  width: auto;
+`;
+function CommentText({ text, onEnter }) {
+  const [editing, setEditing] = useState(false);
+  const _onEnter = (text) => {
+    setEditing(false);
+    onEnter(text);
+  };
+  return (
+    <>
+      {editing ? (
+        <NotMaxWidthInput defaultVal={text} onEnter={_onEnter} />
+      ) : (
+        <span onClick={() => setEditing(true)}>{text}</span>
+      )}
+    </>
   );
 }
 
@@ -70,11 +104,11 @@ const Scroll = styled.div`
 `;
 function CommentAreaLayout(props) {
   const { getCurrentTime, dbRef } = props.context();
-  const commentRef = dbRef.child("comments");
+  const commentsRef = dbRef.child("comments");
 
   function sendComment(text) {
     const time = getCurrentTime();
-    commentRef.push({
+    commentsRef.push({
       text,
       milli: time.milliseconds,
     });
@@ -93,7 +127,7 @@ const FieldHasAddons = styled.div.attrs({ className: `field has-addons` })``;
 const Control = styled.div.attrs({ className: `control` })``;
 
 function CommentInput({ onEnter }) {
-  return (
+  /*
     <FieldHasAddons>
       <button className="button is-info">
         <FontAwesomeIcon icon={faMapPin} />
@@ -102,7 +136,8 @@ function CommentInput({ onEnter }) {
         <MyInput onEnter={onEnter} placeholder="write comment" />
       </Control>
     </FieldHasAddons>
-  );
+        */
+  return <MyInput onEnter={onEnter} placeholder="write comment" />;
 }
 
 export default CommentAreaLayout;
